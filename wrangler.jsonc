@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "gb-competency2",
+  "main": "src/index.js",
+  "compatibility_date": "2025-09-01",
+
+  // 역량사전 화면(public/index.html)은 정적 파일로, /api/chat 은 Worker가 처리
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+
+  // 요청 로그 (Cloudflare 대시보드 → Workers → gb-competency2 → Logs)
+  "observability": { "enabled": true },
+
+  // IP당 1분에 10회
+  "ratelimits": [
+    { "name": "CHAT_LIMITER", "namespace_id": "1002", "simple": { "limit": 10, "period": 60 } }
+  ]
+
+  // ANTHROPIC_API_KEY 는 여기에 적지 말고 대시보드 비밀값 또는 `npx wrangler secret put ANTHROPIC_API_KEY` 로 등록
+}
