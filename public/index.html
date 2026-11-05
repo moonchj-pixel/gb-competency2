@@ -204,9 +204,9 @@
   }
   .th-sub{display:block; font-size:12px; font-weight:400; color:var(--ink-faint); margin-top:2px;}
   .system-table th.col-rank{width:124px;}
-  .system-table th.col-common{box-shadow:inset 0 3px 0 var(--common); width:21%;}
-  .system-table th.col-role{box-shadow:inset 0 3px 0 var(--role); width:23%;}
-  .system-table th.col-ai{box-shadow:inset 0 3px 0 var(--ai); width:28%;}
+  .system-table th.col-common{box-shadow:inset 0 3px 0 var(--common); width:20%;}
+  .system-table th.col-role{box-shadow:inset 0 3px 0 var(--role); width:22%;}
+  .system-table th.col-ai{box-shadow:inset 0 3px 0 var(--ai); width:26%;}
   .system-table th.col-job{box-shadow:inset 0 3px 0 var(--job);}
   .system-table td{
     padding:16px; border-top:1px solid var(--rule); font-size:14px; line-height:1.6; vertical-align:top;
@@ -442,6 +442,59 @@
   .callout-box b{color:var(--ink); font-weight:700;}
   .ai-cell-note{font-size:13px; color:var(--ink-faint);}
 
+  /* ===== 포인트 색: 화면별 역량 구분 색을 --cat 으로 받아 쓴다 ===== */
+  #content{--cat:var(--brand-ink); --cat-soft:var(--brand-soft);}
+  #content[data-cat="common"]{--cat:var(--common); --cat-soft:var(--common-soft);}
+  #content[data-cat="role"]{--cat:var(--role); --cat-soft:var(--role-soft);}
+  #content[data-cat="ai"]{--cat:var(--ai); --cat-soft:var(--ai-soft);}
+  #content[data-cat="job"]{--cat:var(--job); --cat-soft:var(--job-soft);}
+
+  .topbar-go, .ai-launch, #ai-send{background:var(--brand);}
+  .topbar-go:hover, .ai-launch:hover, #ai-send:hover{background:var(--brand-ink);}
+
+  /* 메뉴의 직급·조직명은 역량명과 다른 색으로 */
+  .nav-group[data-group="role"] .nav-level-tag{color:var(--role); font-weight:700;}
+  .nav-group[data-group="job"] .nav-level-tag{color:var(--job); font-weight:700;}
+
+  /* 화면 상단 띠: 홈·내 역량은 진한 색, 그 외는 구분 색 */
+  .home-hero{background:var(--ink); border-radius:16px; padding:32px 36px;}
+  .home-hero .eyebrow{color:#FF8FA3;}
+  .home-hero h1{color:#fff;}
+  .home-hero p{color:#D1D6DB;}
+  .home-hero p b{color:#fff;}
+  #content[data-cat="ai"] .home-hero{background:var(--cat-soft);}
+  #content[data-cat="ai"] .home-hero .eyebrow{color:var(--cat);}
+  #content[data-cat="ai"] .home-hero h1{color:var(--ink);}
+  #content[data-cat="ai"] .home-hero p{color:var(--ink-soft);}
+  .comp-header, .job-hero{background:var(--cat-soft); border-radius:16px; padding:28px 32px;}
+  .comp-header .badge.b-common, .comp-header .badge.b-role, .comp-header .badge.b-job, .comp-header .badge.b-ai{background:#fff;}
+  .job-hero .org{color:var(--cat);}
+
+  .section-block h2:not(:has(.dot))::before{content:""; width:4px; height:16px; border-radius:2px; flex-shrink:0; background:var(--cat);}
+  .behavior-list li .num{color:var(--cat);}
+  .level-tab.active{background:var(--cat); border-color:var(--cat);}
+  .ksa-card h3{color:var(--cat);}
+  .cert-chip{background:var(--cat-soft); color:var(--cat);}
+  .comp-chip:hover{border-color:var(--cat); color:var(--cat);}
+
+  /* 표 머리글 */
+  .system-table th.col-common{background:var(--common-soft); color:var(--common);}
+  .system-table th.col-role{background:var(--role-soft); color:var(--role);}
+  .system-table th.col-ai{background:var(--ai-soft); color:var(--ai);}
+  .system-table th.col-job{background:var(--job-soft); color:var(--job);}
+  .system-table th .th-sub{color:var(--ink-soft);}
+  .ai-matrix th{background:var(--cat-soft); color:var(--cat); border-bottom-color:var(--rule);}
+
+  /* 홈 카드 */
+  .home-card{border-color:transparent; background:var(--soft);}
+  .home-card:hover{border-color:var(--dot);}
+  .home-card h3{color:var(--dot);}
+  .home-card p{color:var(--ink-soft);}
+  .home-card[data-go="common"]{--soft:var(--common-soft);}
+  .home-card[data-go="role"]{--soft:var(--role-soft);}
+  .home-card[data-go="aiOverview"]{--soft:var(--ai-soft);}
+  .home-card[data-go="jobList"]{--soft:var(--job-soft);}
+
   @media (max-width: 1240px){
     .home-cards{grid-template-columns:repeat(2,1fr);}
     #content{padding-left:32px; padding-right:32px;}
@@ -470,6 +523,7 @@
     .topbar-go{flex:1;}
     #content{overflow:visible; padding:20px 16px 64px;}
     .home-hero h1, .comp-header h1, .job-hero h1{font-size:26px;}
+    .home-hero, .comp-header, .job-hero{padding:22px 20px; border-radius:12px;}
     .home-cards{grid-template-columns:1fr;}
     .ksa-card{grid-template-columns:1fr; gap:6px;}
     .ladder-row{flex-direction:column; gap:8px;}
@@ -557,7 +611,7 @@ function findAI(name){ return AI ? AI.competencies.find(c => c.name === name) : 
 const state = {
   route: { type: 'home' }, // home | common | role | ai | aiOverview | job | jobOverview
   topFilter: { job: '', level: '', kind: '' },
-  openGroups: new Set(['common']), // 메뉴는 한 번에 한 그룹만 펼친다
+  openGroups: new Set(), // 처음엔 모두 닫아 두고, 메뉴는 한 번에 한 그룹만 펼친다
   openJobs: new Set(),
   history: [], // stack of previous routes for "이전 페이지" navigation
 };
@@ -805,6 +859,7 @@ function render(){
   if(document.getElementById('ai-context-bar')) setAIContextBar();
   const c = document.getElementById('content');
   c.classList.toggle('wide', ['home','aiOverview','myCompetencies'].includes(state.route.type));
+  c.dataset.cat = {common:'common', role:'role', ai:'ai', aiOverview:'ai', job:'job', jobOverview:'job'}[state.route.type] || '';
   switch(state.route.type){
     case 'home': c.innerHTML = renderHome(); attachHomeEvents(); break;
     case 'common': c.innerHTML = renderCommonDetail(state.route.name); attachCommonDetailEvents(state.route.name); break;
