@@ -84,6 +84,6 @@ npx wrangler dev
 | 항목 | 위치 | 기본값 |
 |---|---|---|
 | 모델 | `src/index.js` `MODEL` | `claude-sonnet-5-5` |
-| 답변 길이 | `src/index.js` `MAX_TOKENS` | 2000 |
+| 답변 길이 | `src/index.js` `MAX_TOKENS` | 4000 |
 | 요청 속도 제한 | `wrangler.jsonc` `ratelimits` | IP당 1분 10회 |
 | 글꼴 | `public/index.html` `--sans` | Pretendard (jsDelivr CDN) |
