@@ -1667,10 +1667,10 @@ function attachMyCompEvents(){
 }
 
 /* ============== 역량 자가진단 ============== */
-// 공통·역할역량은 평소 행동(~한다)을 묻는 동의 척도, AI·직무역량은 숙련도를 묻는 수행 수준 척도
+// 공통·역할·AI 활용역량은 평소 행동(~한다)을 묻는 동의 척도, 직무역량은 숙련도를 묻는 수행 수준 척도
 const DIAG_SCALE_KINDS = [
   {
-    label: '동의 정도', groups: ['common', 'role'],
+    label: '동의 정도', groups: ['common', 'role', 'ai'],
     scale: [
       {v:1, t:'매우 그렇지 않다'},
       {v:2, t:'그렇지 않다'},
@@ -1680,7 +1680,7 @@ const DIAG_SCALE_KINDS = [
     ],
   },
   {
-    label: '수행 수준', groups: ['ai', 'job'],
+    label: '수행 수준', groups: ['job'],
     scale: [
       {v:1, t:'아직 어렵다'},
       {v:2, t:'도움을 받으면 일부 할 수 있다'},
@@ -1802,7 +1802,7 @@ function diagLoad(job, level){
 function diagSave(){
   try{
     window.localStorage.setItem(diagStorageKey(diag.job, diag.level),
-      JSON.stringify({ sv: 2, answers: diag.answers, excluded: diag.excluded, name: diag.name }));
+      JSON.stringify({ sv: 3, answers: diag.answers, excluded: diag.excluded, name: diag.name }));
   }catch(e){ /* 저장이 막힌 환경에서도 진단은 계속한다 */ }
 }
 
@@ -1817,8 +1817,8 @@ function diagEnsure(route){
       excluded: saved.excluded || [],
       name: saved.name || '',
       missing: false,
-      // 응답 척도가 바뀌기 전에 저장한 공통·역할역량 응답이 있는지
-      oldScale: saved.sv !== 2 && Object.keys(saved.answers || {}).some(k => /^(common|role)\|/.test(k)),
+      // 응답 척도가 바뀌기 전에 저장한 응답이 있는지 (sv 2는 공통·역할역량까지 새 척도로 저장됨)
+      oldScale: saved.sv !== 3 && Object.keys(saved.answers || {}).some(k => (saved.sv === 2 ? /^ai\|/ : /^(common|role|ai)\|/).test(k)),
     };
   }
   // 화면 단계는 주소(route)를 따른다. 응답이 지워졌거나 미완료면 리포트 대신 안내 화면으로
@@ -1922,7 +1922,7 @@ function renderDiagIntro(){
     ${jobList}
     <div class="section-block" style="max-width:none;">
       <h2>응답 기준</h2>
-      ${diag.oldScale ? '<p class="diag-missing" style="margin:0 0 12px;">응답 기준이 바뀌었습니다. 이전에 답한 공통·역할역량은 새 기준으로 다시 확인해 주세요.</p>' : ''}
+      ${diag.oldScale ? '<p class="diag-missing" style="margin:0 0 12px;">응답 기준이 바뀌었습니다. 이전에 답한 공통·역할·AI 활용역량은 새 기준으로 다시 확인해 주세요.</p>' : ''}
       ${DIAG_SCALE_KINDS.filter(k => k.groups.some(g => groups.includes(g) && bank[g].length)).map(k => `
         <h3 class="diag-scale-title">${DIAG_GROUPS.filter(g => k.groups.includes(g.key) && groups.includes(g.key) && bank[g.key].length).map(g => g.label).join('·')} : ${k.label}</h3>
         <ol class="diag-scale-list">
@@ -2127,11 +2127,11 @@ function diagAnalysis(r){
   // 척도가 같은 역량군끼리만 비교한다
   DIAG_SCALE_KINDS.forEach(kind => {
     const gs = r.groups.filter(g => kind.groups.includes(g.key)).sort((a, b) => b.score - a.score);
-    if(gs.length !== 2) return;
-    const diff = gs[0].score - gs[1].score;
+    if(gs.length < 2) return;
+    const hi = gs[0], lo = gs[gs.length - 1], diff = hi.score - lo.score;
     notes.push(diff >= 0.5
-      ? `${gs[0].label}(${fmt(gs[0].score)})이 ${gs[1].label}(${fmt(gs[1].score)})보다 ${fmt(diff)}점 높습니다.`
-      : `${gs[0].label}과 ${gs[1].label}의 점수 차이는 ${fmt(diff)}점으로 크지 않습니다.`);
+      ? `${hi.label}(${fmt(hi.score)})이 ${lo.label}(${fmt(lo.score)})보다 ${fmt(diff)}점 높습니다.`
+      : `${gs.map(g => g.label).join('·')}의 점수 차이는 ${fmt(diff)}점 이내로 크지 않습니다.`);
   });
   r.groups.forEach(g => {
     if(g.comps.length < 2) return;
@@ -2306,7 +2306,7 @@ function diagReportInner(r, forFile){
     </div>`).join('')).join('')}
 
     <p class="gb-rp-foot">${DIAG_SCALE_KINDS.filter(k => r.groups.some(g => k.groups.includes(g.key))).map(k => k.label + ' : ' + k.scale.map(s => s.v + ' ' + s.t).join(' / ')).join('<br>')}<br>
-    역량 점수는 문항 응답의 평균이고, 역량군 점수는 역량 점수의 평균입니다. 공통·역할역량과 AI·직무역량은 척도가 달라 점수를 직접 비교하지 않습니다.${r.aiLevel ? ' AI 활용역량은 ' + escapeHtml(r.aiLevel) + ' 기준입니다.' : ''}</p>`;
+    역량 점수는 문항 응답의 평균이고, 역량군 점수는 역량 점수의 평균입니다. 직무역량은 다른 역량군과 척도가 달라 점수를 직접 비교하지 않습니다.${r.aiLevel ? ' AI 활용역량은 ' + escapeHtml(r.aiLevel) + ' 기준입니다.' : ''}</p>`;
 }
 
 function renderDiagReportScreen(){
