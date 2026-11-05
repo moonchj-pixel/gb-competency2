@@ -3,7 +3,7 @@
 // API 키는 Cloudflare 비밀값(ANTHROPIC_API_KEY)으로만 보관하며 브라우저에 노출되지 않습니다.
 
 const MODEL = "claude-sonnet-5-5";
-const MAX_TOKENS = 1500;
+const MAX_TOKENS = 2000;
 const MAX_SYSTEM_CHARS = 120000;
 const MAX_HISTORY_TURNS = 12;
 const MAX_TURN_CHARS = 4000;

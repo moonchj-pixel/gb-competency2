@@ -57,6 +57,20 @@ npx wrangler dev
 `http://localhost:8787` 에서 열립니다. AI 질문까지 시험하려면 이 폴더에 `.dev.vars` 파일을 만들고
 `ANTHROPIC_API_KEY=sk-ant-...` 한 줄을 적습니다 (GitHub에는 올라가지 않음).
 
+## 역량 자가진단
+
+상단 「내 정보로 찾기」에서 직무·직급을 고르고 「내 역량 보기」를 누르면 진단 버튼이 나옵니다.
+
+- 범위 : 전체 / 공통 / 역할 / AI 활용 / 직무역량 중 선택 (역량당 최대 10문항, 수행 수준 5점)
+- 직무역량 : 진단 전 본인 업무와 무관한 역량을 제외할 수 있음
+- AI 활용역량 : 직급별 기본 이수 레벨 기준 (담당 L1 / 선임 이상 L2)
+- 결과 : 개인 리포트를 HTML로 내려받아 인쇄·PDF 저장. 응답은 해당 브라우저에만 임시 저장
+- AI 추천 : 리포트에서 버튼을 누를 때만 이름을 뺀 직무·직급, 점수, 낮게 응답한 행동을 전송해 교육·개발 방법을 받음
+
+## 화면 이동
+
+화면마다 고유 주소(`#type=...`)를 가지므로 브라우저 뒤로·앞으로 버튼, 새로고침, 주소 공유가 동작합니다.
+
 ## 꼭 지킬 것
 
 - API 키를 코드, `wrangler.jsonc`, `public/` 안에 적지 마세요. Cloudflare 비밀값으로만 등록합니다.
@@ -70,6 +84,6 @@ npx wrangler dev
 | 항목 | 위치 | 기본값 |
 |---|---|---|
 | 모델 | `src/index.js` `MODEL` | `claude-sonnet-5-5` |
-| 답변 길이 | `src/index.js` `MAX_TOKENS` | 1500 |
+| 답변 길이 | `src/index.js` `MAX_TOKENS` | 2000 |
 | 요청 속도 제한 | `wrangler.jsonc` `ratelimits` | IP당 1분 10회 |
 | 글꼴 | `public/index.html` `--sans` | Pretendard (jsDelivr CDN) |

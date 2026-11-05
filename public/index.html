@@ -535,6 +535,70 @@
     .op-item{flex-direction:column; gap:2px;}
     .behavior-list li{padding:12px 14px; gap:10px;}
   }
+  /* ===== 역량 자가진단 ===== */
+  .my-title-row{display:flex; flex-wrap:wrap; gap:14px 24px; align-items:flex-start; justify-content:space-between; margin-bottom:10px;}
+  .my-title-row h1{margin:0;}
+  .diag-actions{flex:1 1 420px; min-width:0;}
+  .diag-actions-row{display:flex; flex-wrap:wrap; gap:7px; justify-content:flex-end;}
+  .diag-hint{font-size:12px; color:var(--ink-soft); margin-top:7px; text-align:right;}
+  .diag-btn{
+    font-family:var(--sans); font-size:13px; font-weight:600; padding:8px 13px; border-radius:8px; cursor:pointer;
+    background:#fff; color:var(--ink); border:1px solid var(--rule-strong);
+  }
+  .diag-btn:hover:not(:disabled){border-color:var(--ink);}
+  .diag-btn.primary{background:var(--brand); color:#fff; border-color:var(--brand);}
+  .diag-btn.primary:hover:not(:disabled){background:var(--brand-ink); border-color:var(--brand-ink);}
+  .diag-btn:disabled{opacity:.42; cursor:not-allowed;}
+  .diag-btn:focus-visible,.diag-option input:focus-visible + .diag-option-num,.diag-job-item input:focus-visible{outline:2px solid var(--common); outline-offset:2px;}
+  .diag-lead{font-size:13.5px; color:var(--ink-soft); line-height:1.7; margin:0 0 12px;}
+  .diag-note{font-size:12.5px; color:var(--ink-soft); line-height:1.7; margin:10px 0 0;}
+  .diag-table{border-collapse:collapse; min-width:320px; background:#fff;}
+  .diag-table th,.diag-table td{border:1px solid var(--rule); padding:8px 14px; font-size:13.5px; text-align:left;}
+  .diag-table th{background:var(--surface-2); font-weight:600;}
+  .diag-table .num{text-align:right; font-variant-numeric:tabular-nums;}
+  .diag-table tfoot td{font-weight:700;}
+  .diag-job-list{display:flex; flex-direction:column; gap:8px;}
+  .diag-job-item{display:flex; gap:11px; align-items:flex-start; background:#fff; border:1px solid var(--rule); border-radius:10px; padding:11px 14px; cursor:pointer; font-size:13.5px;}
+  .diag-job-item input{margin-top:4px; width:16px; height:16px; flex-shrink:0;}
+  .diag-job-count{font-size:12px; color:var(--ink-soft); margin-left:7px;}
+  .diag-job-def{display:block; font-size:12.5px; color:var(--ink-soft); line-height:1.55; margin-top:2px;}
+  .diag-scale-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; font-size:13.5px;}
+  .diag-scale-num{display:inline-flex; width:22px; height:22px; align-items:center; justify-content:center; border-radius:6px; background:var(--surface-2); font-weight:700; font-size:12px; margin-right:9px;}
+  .diag-nav{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:26px;}
+  .diag-missing{font-size:13px; font-weight:600; color:var(--brand-ink);}
+  .diag-progress{position:sticky; top:-32px; z-index:5; background:var(--bg); padding:10px 0; margin-bottom:14px;}
+  .diag-progress-text{font-size:13px; color:var(--ink-soft); margin-bottom:6px; font-variant-numeric:tabular-nums;}
+  .diag-progress-text b{color:var(--ink);}
+  .diag-progress-track{height:6px; background:var(--surface-2); border-radius:4px; overflow:hidden;}
+  .diag-progress-fill{height:100%; background:var(--ink); transition:width .15s ease;}
+  .diag-questions{display:flex; flex-direction:column; gap:12px;}
+  .diag-q{border:1px solid var(--rule); border-radius:12px; background:#fff; padding:14px 16px 15px; margin:0; min-width:0;}
+  .diag-q.is-missing{border-color:var(--brand-ink);}
+  .diag-q legend{display:contents;}
+  .diag-q legend{font-size:14.5px; font-weight:600; line-height:1.55;}
+  .diag-q-num{color:var(--ink-soft); margin-right:7px; font-variant-numeric:tabular-nums;}
+  .diag-options{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; margin-top:10px;}
+  .diag-option{display:flex; flex-direction:column; align-items:center; gap:4px; border:1px solid var(--rule); border-radius:9px; padding:9px 6px; cursor:pointer; text-align:center; background:#fff;}
+  .diag-option:hover{border-color:var(--ink-soft);}
+  .diag-option input{position:absolute; opacity:0; width:1px; height:1px;}
+  .diag-option-num{font-size:14px; font-weight:700; border-radius:4px;}
+  .diag-option-text{font-size:11.5px; line-height:1.4; color:var(--ink-soft);}
+  .diag-option.is-selected{background:var(--ink); border-color:var(--ink);}
+  .diag-option.is-selected .diag-option-num,.diag-option.is-selected .diag-option-text{color:#fff;}
+  .diag-report-tools{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px;}
+  .diag-name{font-size:13px; font-weight:600; display:flex; align-items:center; gap:7px; margin-right:6px;}
+  .diag-name input{font-family:var(--sans); font-size:13px; padding:7px 10px; border:1px solid var(--rule-strong); border-radius:8px; width:170px;}
+  @media (max-width: 880px){
+    .diag-actions-row{justify-content:flex-start;}
+    .diag-hint{text-align:left;}
+    .diag-progress{top:-24px;}
+    .diag-options{grid-template-columns:1fr;}
+    .diag-option{flex-direction:row; text-align:left; gap:10px; padding:9px 12px;}
+    .diag-option-num{width:16px; text-align:center;}
+  }
+
+.msg.user{white-space:pre-wrap;}
+  .home-hero .diag-hint{color:#D1D6DB;}
 </style>
 </head>
 <body>
@@ -618,7 +682,6 @@ const state = {
   topFilter: { job: '', level: '', kind: '' },
   openGroups: new Set(), // 처음엔 모두 닫아 두고, 메뉴는 한 번에 한 그룹만 펼친다
   openJobs: new Set(),
-  history: [], // stack of previous routes for "이전 페이지" navigation
 };
 
 function norm(s){ return (s||'').replace(/\s|·|,|\.|\(|\)|\//g,''); }
@@ -647,35 +710,86 @@ function homeButtonHtml(){
 }
 
 /* ============== ROUTING ============== */
+// 화면 이동을 브라우저 기록에 남겨 뒤로·앞으로 버튼, 새로고침, 주소 공유가 동작하게 한다.
 function routesEqual(a, b){
   if(!a || !b) return false;
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
+function routeToUrl(route){
+  const base = location.pathname + location.search;
+  if(route.type === 'home') return base;
+  return base + '#' + new URLSearchParams(route).toString();
+}
+
+function isValidRoute(r){
+  switch(r.type){
+    case 'home': case 'aiOverview': return true;
+    case 'common': return !!findCommon(r.name);
+    case 'role': return !!findRole(r.name);
+    case 'ai': return !!findAI(r.name);
+    case 'jobOverview': return !!JOB_BY_NAME[r.job];
+    case 'job': return !!findJobComp(r.job, r.name);
+    case 'myCompetencies':
+      return (!r.job || !!JOB_BY_NAME[r.job]) && (!r.level || LEVELS.includes(r.level)) && ['', 'common', 'role', 'ai', 'job'].includes(r.kind || '');
+    case 'diagnosis':
+      return (!r.job || !!JOB_BY_NAME[r.job]) && LEVELS.includes(r.level) && ['all', 'common', 'role', 'ai', 'job'].includes(r.scope);
+    default: return false;
+  }
+}
+
+function routeFromHash(){
+  const route = Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+  return isValidRoute(route) ? route : { type: 'home' };
+}
+
+function writeHistory(method, data, url){
+  try{ history[method](data, '', url); }catch(e){ /* 기록을 못 남겨도 화면 이동은 계속한다 */ }
+}
+
+function currentScroll(){
+  return document.getElementById('content').scrollTop || window.scrollY || 0;
+}
+
 function go(route, opts){
   opts = opts || {};
-  // push the current route onto history before navigating away, unless this navigation
-  // is itself a "back" action, or we're already on this exact route.
-  if(!opts.isBack && !routesEqual(state.route, route)){
-    state.history.push(state.route);
-    // cap history length to avoid unbounded growth in a long session
-    if(state.history.length > 50) state.history.shift();
+  if(!opts.fromHistory && !routesEqual(state.route, route)){
+    // 돌아왔을 때 보던 위치로 복귀하도록 현재 위치를 남기고 새 기록을 추가한다
+    writeHistory('replaceState', Object.assign({}, history.state, { scroll: currentScroll() }));
+    writeHistory('pushState', { route, idx: ((history.state && history.state.idx) || 0) + 1, scroll: 0 }, routeToUrl(route));
   }
   state.route = route;
   if(route.type==='common') state.openGroups = new Set(['common']);
   if(route.type==='role') state.openGroups = new Set(['role']);
   if(route.type==='ai' || route.type==='aiOverview') state.openGroups = new Set(['ai']);
   if(route.type==='job' || route.type==='jobOverview'){ state.openGroups = new Set(['job']); if(route.job) state.openJobs = new Set([route.job]); }
+  if(route.type==='myCompetencies') state.topFilter = { job: route.job || '', level: route.level || '', kind: route.kind || '' };
+  if(route.type==='diagnosis') state.topFilter = { job: route.job || '', level: route.level || '', kind: state.topFilter.kind };
   render();
-  document.getElementById('content').scrollTop = 0;
-  window.scrollTo(0,0);
+  const top = opts.scroll || 0;
+  document.getElementById('content').scrollTop = top;
+  window.scrollTo(0, top);
   if(window.innerWidth <= 880) document.getElementById('sidebar').classList.remove('open');
 }
 
 function goBack(){
-  if(state.history.length === 0){ go({type:'home'}); return; }
-  const prev = state.history.pop();
-  go(prev, {isBack:true});
+  if(history.state && history.state.idx > 0) history.back();
+  else go({type:'home'});
+}
+
+function initRouter(){
+  try{ history.scrollRestoration = 'manual'; }catch(e){}
+  const saved = history.state || {};
+  const route = routeFromHash();
+  writeHistory('replaceState', { route, idx: saved.idx || 0, scroll: 0 }, routeToUrl(route));
+  go(route, { fromHistory: true });
+  window.addEventListener('popstate', e => {
+    const s = e.state;
+    const target = (s && s.route) || routeFromHash();
+    if(!s) writeHistory('replaceState', { route: target, idx: 1, scroll: 0 });
+    setAIOverlay(!!(s && s.ai));
+    if(!routesEqual(target, state.route)) go(target, { fromHistory: true, scroll: s ? s.scroll : 0 });
+  });
 }
 
 /* ============== SIDEBAR NAV ============== */
@@ -874,6 +988,7 @@ function render(){
     case 'jobOverview': c.innerHTML = renderJobOverview(state.route.job); attachJobOverviewEvents(); break;
     case 'job': c.innerHTML = renderJobDetail(state.route.job, state.route.name); break;
     case 'myCompetencies': c.innerHTML = renderMyCompetencies(); attachMyCompEvents(); break;
+    case 'diagnosis': diagEnsure(state.route); c.innerHTML = renderDiagnosis(); attachDiagnosisEvents(); break;
     default: c.innerHTML = renderHome();
   }
 }
@@ -1510,7 +1625,10 @@ function renderMyCompetencies(){
   <div class="page-top"><div class="breadcrumb">내 역량 보기</div>${homeButtonHtml()}</div>
   <div class="home-hero" style="margin-bottom:24px;">
     <div class="eyebrow">My Competencies</div>
-    <h1>${headerBits.join(' · ') || '전체'} 역량 모아보기</h1>
+    <div class="my-title-row">
+      <h1 style="font-size:26px;">${headerBits.join(' · ') || '전체'} 역량 모아보기</h1>
+      ${diagActionsHtml(job, level)}
+    </div>
     <p>선택하신 조건에 해당하는 역량을 한 곳에 모았습니다. 카드를 클릭하면 상세 행동지표·지식/기술/태도를 확인할 수 있어요.</p>
   </div>
   ${sections.map(renderMySection).join('')}
@@ -1540,6 +1658,745 @@ function attachMyCompEvents(){
     el.addEventListener('click', () => {
       const route = JSON.parse(el.dataset.route.replace(/&#39;/g,"'"));
       go(route);
+    });
+  });
+  attachDiagActions(state.route.job, state.route.level);
+}
+
+/* ============== 역량 자가진단 ============== */
+const DIAG_SCALE = [
+  {v:1, t:'아직 어렵다'},
+  {v:2, t:'도움을 받으면 일부 할 수 있다'},
+  {v:3, t:'도움을 받으면 대체로 할 수 있다'},
+  {v:4, t:'혼자서 할 수 있다'},
+  {v:5, t:'능숙하게 하고 다른 사람을 지도할 수 있다'},
+];
+const DIAG_GROUPS = [
+  {key:'common', label:'공통역량'},
+  {key:'role', label:'역할역량'},
+  {key:'ai', label:'AI 활용역량'},
+  {key:'job', label:'직무역량'},
+];
+const DIAG_MAX_ITEMS = 10;
+// 행동지표가 10개를 넘는 역량에서 다른 지표와 내용이 겹쳐 제외하는 항목 (원문 순번, 0부터)
+const DIAG_EXCLUDED_ITEMS = { 'role|부하육성': [4, 8] };
+// 역량사전 원문의 PDF 줄바꿈 흔적을 질문에서만 교정한다
+const DIAG_TEXT_FIXES = [
+  ['도 전적인','도전적인'],['전 달할','전달할'],['도 출','도출'],['제 안','제안'],['처 리','처리'],['편 집자료','편집자료'],
+  ['발 주','발주'],['활 용','활용'],['설 정','설정'],['검 토','검토'],['콘 텐츠','콘텐츠'],['추 진','추진'],['접근통 제','접근통제'],
+  ['업 무','업무'],['대 책','대책'],['준 비','준비'],['애 플리케이션','애플리케이션'],['요 구사항','요구사항'],['공 유','공유'],
+  ['적 합','적합'],['결 정','결정'],['세무조 정','세무조정'],['과 세소득','과세소득'],['예 산','예산'],['제 외','제외'],['납 부','납부'],
+  ['취 합','취합'],['모니터 링','모니터링'],['따 라','따라'],['DB 로','DB로'],['부 속서류','부속서류'],
+];
+const DIAG_PARTICLE_ENDS = '을를은는이가에도로와과의잘더못록게고지서며면여어아히 ';
+
+function diagCleanText(s){
+  let t = (s || '').trim();
+  DIAG_TEXT_FIXES.forEach(([a,b]) => { t = t.split(a).join(b); });
+  t = t.replace(/ 다\./g, '다.');
+  t = t.replace(/\.\((리더|인사)\)$/, '.');
+  t = t.replace(/하 (고|여|게|며)([ ,])/g, '하$1$2');
+  t = t.replace(/([가-힣]) (할 수|하여|하고|하게|한다)/g, (m, c, w) => DIAG_PARTICLE_ENDS.includes(c) ? m : c + w);
+  t = t.replace(/([^\s]) (을|를|에) /g, '$1$2 ');
+  t = t.replace(/\) 로 /g, ')로 ');
+  return t;
+}
+
+function diagMakeComp(group, name, definition, behaviors, source){
+  const id = group + '|' + name;
+  const skip = DIAG_EXCLUDED_ITEMS[id] || [];
+  const items = (behaviors || [])
+    .map((b, i) => ({ id: id + '|' + i, text: diagCleanText(b), idx: i }))
+    .filter(it => !skip.includes(it.idx))
+    .slice(0, DIAG_MAX_ITEMS);
+  const src = source || {};
+  return { id, group, name, definition: definition || '', items, knowledge: src.knowledge || [], skill: src.skill || [], certs: src.certs || [] };
+}
+
+function diagBank(job, level){
+  const out = { common: [], role: [], ai: [], job: [] };
+  if(!level) return out;
+  out.common = DATA.common.map(c => diagMakeComp('common', c.name, c.definition, c.behaviors_by_level[level]));
+  out.role = DATA.role.competencies.filter(c => c.level === level)
+    .map(c => diagMakeComp('role', c.name, c.definition, c.behaviors));
+  if(AI){
+    const code = rankToCode(level);
+    out.ai = AI.competencies.filter(c => aiApplies(c, code))
+      .map(c => diagMakeComp('ai', c.name, c.definition, (c.behaviors_by_level || {})[code], c));
+  }
+  const j = job ? JOB_BY_NAME[job] : null;
+  if(j){
+    out.job = j.competencies.filter(c => (c.level_buckets || []).includes(level))
+      .map(c => diagMakeComp('job', c.name, c.definition, c.behaviors, c));
+  }
+  ['common','role','ai','job'].forEach(k => { out[k] = out[k].filter(c => c.items.length); });
+  return out;
+}
+
+function diagScopeGroups(scope){
+  return scope === 'all' ? DIAG_GROUPS.map(g => g.key) : [scope];
+}
+function diagScopeLabel(scope){
+  if(scope === 'all') return '전체 역량';
+  const g = DIAG_GROUPS.find(x => x.key === scope);
+  return g ? g.label : '';
+}
+
+/* ---- 내 역량 보기 화면의 진단 버튼 ---- */
+function diagActionsHtml(job, level){
+  const jobComps = level && job ? diagBank(job, level).job.length : 0;
+  const btn = (scope, label, enabled, cls) =>
+    `<button class="diag-btn ${cls||''}" data-diag-scope="${scope}" ${enabled?'':'disabled'}>${label}</button>`;
+  let hint = '';
+  if(!level) hint = '직급을 선택하면 진단할 수 있어요.';
+  else if(!job) hint = '직무까지 선택하면 전체 역량과 직무역량도 진단할 수 있어요.';
+  else if(!jobComps) hint = '이 직무·직급에는 등록된 직무역량이 없어 직무역량을 제외하고 진단합니다.';
+  return `<div class="diag-actions">
+    <div class="diag-actions-row">
+      ${btn('all', '전체 역량 진단하기', !!level && !!job, 'primary')}
+      ${btn('common', '공통역량 진단하기', !!level)}
+      ${btn('role', '역할역량 진단하기', !!level)}
+      ${btn('ai', 'AI 활용역량 진단하기', !!level && !!AI)}
+      ${btn('job', '직무역량 진단하기', !!level && !!job && jobComps > 0)}
+    </div>
+    ${hint ? `<div class="diag-hint">${hint}</div>` : ''}
+  </div>`;
+}
+
+function attachDiagActions(job, level){
+  document.querySelectorAll('[data-diag-scope]').forEach(el => {
+    el.addEventListener('click', () => go({type:'diagnosis', job, level, scope: el.dataset.diagScope}));
+  });
+}
+
+/* ---- 응답 임시 저장 : 이 브라우저에만 남는다 ---- */
+let diag = null;
+
+function diagStorageKey(job, level){ return 'gbDiag:v1:' + job + ':' + level; }
+function diagLoad(job, level){
+  try{
+    const raw = window.localStorage.getItem(diagStorageKey(job, level));
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function diagSave(){
+  try{
+    window.localStorage.setItem(diagStorageKey(diag.job, diag.level),
+      JSON.stringify({ answers: diag.answers, excluded: diag.excluded, name: diag.name }));
+  }catch(e){ /* 저장이 막힌 환경에서도 진단은 계속한다 */ }
+}
+
+function diagEnsure(route){
+  const same = diag && diag.job === route.job && diag.level === route.level && diag.scope === route.scope;
+  if(!same){
+    const saved = diagLoad(route.job, route.level);
+    diag = {
+      job: route.job, level: route.level, scope: route.scope,
+      step: 'intro', page: 0,
+      answers: saved.answers || {},
+      excluded: saved.excluded || [],
+      name: saved.name || '',
+      missing: false,
+    };
+  }
+  // 화면 단계는 주소(route)를 따른다. 응답이 지워졌거나 미완료면 리포트 대신 안내 화면으로
+  let step = route.step || 'intro';
+  if(step !== 'intro'){
+    const comps = diagActiveComps();
+    const total = diagItemCount(comps);
+    if(!total || (step === 'report' && diagAnsweredCount(comps) < total)) step = 'intro';
+  }
+  diag.step = step;
+  diag.page = Math.max(Number(route.page) || 0, 0);
+  diag.missing = false;
+}
+
+function diagNav(step, page){
+  const route = { type: 'diagnosis', job: diag.job, level: diag.level, scope: diag.scope };
+  if(step !== 'intro') route.step = step;
+  if(step === 'questions') route.page = String(page || 0);
+  go(route);
+}
+
+function diagActiveComps(){
+  const bank = diagBank(diag.job, diag.level);
+  const list = [];
+  diagScopeGroups(diag.scope).forEach(k => {
+    bank[k].forEach(c => {
+      if(k === 'job' && diag.excluded.includes(c.name)) return;
+      list.push(c);
+    });
+  });
+  return list;
+}
+function diagAnsweredCount(comps){
+  let n = 0;
+  comps.forEach(c => c.items.forEach(it => { if(diag.answers[it.id]) n++; }));
+  return n;
+}
+function diagItemCount(comps){ return comps.reduce((s, c) => s + c.items.length, 0); }
+
+/* ---- 화면 ---- */
+function renderDiagnosis(){
+  if(!diag.level) return renderEmpty('직급을 선택해야 진단할 수 있어요');
+  if(diag.step === 'questions') return renderDiagQuestions();
+  if(diag.step === 'report') return renderDiagReportScreen();
+  return renderDiagIntro();
+}
+
+function diagTitle(){
+  const j = diag.job ? JOB_BY_NAME[diag.job] : null;
+  return [j ? j.job : '', diag.level].filter(Boolean).join(' · ');
+}
+
+function renderDiagIntro(){
+  const bank = diagBank(diag.job, diag.level);
+  const groups = diagScopeGroups(diag.scope);
+  const comps = diagActiveComps();
+  const total = diagItemCount(comps);
+  const answered = diagAnsweredCount(comps);
+  const showJob = groups.includes('job') && bank.job.length > 0;
+  const rows = DIAG_GROUPS.filter(g => groups.includes(g.key) && bank[g.key].length).map(g => {
+    const active = comps.filter(c => c.group === g.key);
+    return `<tr><td>${g.label}</td><td class="num">${active.length}개</td><td class="num">${diagItemCount(active)}문항</td></tr>`;
+  }).join('');
+  const aiNote = groups.includes('ai') && AI
+    ? `<p class="diag-note">※ AI 활용역량은 직급별 기본 이수 레벨(${escapeHtml(aiLevelName(rankToCode(diag.level)))}) 기준으로 진단합니다.</p>` : '';
+
+  const jobList = showJob ? `
+    <div class="section-block" style="max-width:none;">
+      <h2>직무역량 선택</h2>
+      <p class="diag-lead">지금 맡은 업무와 전혀 관련이 없는 역량은 체크를 해제해 주세요. 해제한 역량은 진단에서 제외되고, 리포트에 제외 역량으로 표시됩니다.</p>
+      <div class="diag-job-list">
+        ${bank.job.map(c => `
+          <label class="diag-job-item">
+            <input type="checkbox" data-diag-job="${escapeHtml(c.name)}" ${diag.excluded.includes(c.name)?'':'checked'}>
+            <span>
+              <b>${escapeHtml(c.name)}</b>
+              <span class="diag-job-count">${c.items.length}문항</span>
+              <span class="diag-job-def">${escapeHtml(diagCleanText(c.definition))}</span>
+            </span>
+          </label>`).join('')}
+      </div>
+    </div>` : '';
+
+  return `
+  <div class="diag-wrap">
+    <div class="page-top"><div class="breadcrumb">내 역량 보기 <span style="opacity:.4;">›</span> <b>역량 자가진단</b></div>${homeButtonHtml()}</div>
+    <div class="home-hero" style="margin-bottom:22px;">
+      <div class="eyebrow">Self Assessment</div>
+      <h1 style="font-size:26px;">${escapeHtml(diagTitle())} ${diagScopeLabel(diag.scope)} 진단</h1>
+      <p>행동지표를 읽고 현재 본인의 수행 수준에 가장 가까운 항목을 선택해 주세요. 평가가 아니라 본인의 강점과 개발할 부분을 확인하기 위한 진단입니다.</p>
+    </div>
+    <div class="section-block" style="max-width:none;">
+      <h2>진단 구성</h2>
+      <table class="diag-table">
+        <thead><tr><th>구분</th><th class="num">역량 수</th><th class="num">문항 수</th></tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr><td>합계</td><td class="num">${comps.length}개</td><td class="num">${total}문항</td></tr></tfoot>
+      </table>
+      ${aiNote}
+    </div>
+    ${jobList}
+    <div class="section-block" style="max-width:none;">
+      <h2>응답 기준</h2>
+      <ol class="diag-scale-list">
+        ${DIAG_SCALE.map(s => `<li><span class="diag-scale-num">${s.v}</span>${s.t}</li>`).join('')}
+      </ol>
+      <p class="diag-note">※ 응답은 이 브라우저에만 임시 저장됩니다. 리포트에서 AI 추천을 직접 요청할 때만 이름을 뺀 결과 요약이 전송됩니다.</p>
+    </div>
+    <div class="diag-nav">
+      <button class="diag-btn primary" data-diag-action="start" ${total ? '' : 'disabled'}>${answered ? `이어서 진단하기 (${answered}/${total})` : '진단 시작하기'}</button>
+      ${total ? '' : '<span class="diag-missing">진단할 직무역량을 1개 이상 선택해 주세요.</span>'}
+    </div>
+  </div>`;
+}
+
+function renderDiagQuestions(){
+  const comps = diagActiveComps();
+  if(diag.page >= comps.length) diag.page = Math.max(comps.length - 1, 0);
+  const c = comps[diag.page];
+  const total = diagItemCount(comps);
+  const answered = diagAnsweredCount(comps);
+  const group = DIAG_GROUPS.find(g => g.key === c.group);
+  const isLast = diag.page === comps.length - 1;
+  return `
+  <div class="diag-wrap">
+    <div class="breadcrumb">${escapeHtml(diagTitle())} <span style="opacity:.4;">›</span> ${diagScopeLabel(diag.scope)} 진단</div>
+    <div class="diag-progress" aria-live="polite">
+      <div class="diag-progress-text"><b id="diag-progress-num">${answered}</b> / ${total}문항 · 역량 ${diag.page + 1} / ${comps.length}</div>
+      <div class="diag-progress-track"><div class="diag-progress-fill" id="diag-progress-fill" style="width:${total ? answered / total * 100 : 0}%"></div></div>
+    </div>
+    <div class="comp-header" style="margin-bottom:18px;">
+      <div class="comp-badges"><span class="badge ${{common:'b-common',role:'b-role',ai:'b-ai',job:'b-job'}[c.group]}">${group.label}</span></div>
+      <h1 style="font-size:24px;">${escapeHtml(c.name)}</h1>
+      <div class="comp-def">${escapeHtml(diagCleanText(c.definition))}</div>
+    </div>
+    <div class="diag-questions">
+      ${c.items.map((it, i) => {
+        const val = diag.answers[it.id];
+        return `<fieldset class="diag-q ${diag.missing && !val ? 'is-missing' : ''}" data-diag-item="${escapeHtml(it.id)}">
+          <legend><span class="diag-q-num">${i + 1}</span>${escapeHtml(it.text)}</legend>
+          <div class="diag-options">
+            ${DIAG_SCALE.map(s => `
+              <label class="diag-option ${val === s.v ? 'is-selected' : ''}">
+                <input type="radio" name="${escapeHtml(it.id)}" value="${s.v}" ${val === s.v ? 'checked' : ''}>
+                <span class="diag-option-num">${s.v}</span>
+                <span class="diag-option-text">${s.t}</span>
+              </label>`).join('')}
+          </div>
+        </fieldset>`;
+      }).join('')}
+    </div>
+    <div class="diag-nav">
+      <button class="diag-btn" data-diag-action="prev">이전</button>
+      <button class="diag-btn primary" data-diag-action="next">${isLast ? '진단 완료하고 리포트 보기' : '다음 역량'}</button>
+      <span class="diag-missing" id="diag-missing-msg">${diag.missing ? '응답하지 않은 문항이 있습니다.' : ''}</span>
+    </div>
+  </div>`;
+}
+
+/* ---- 결과 계산 ---- */
+function diagMean(arr){ return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+
+function diagBand(score){
+  if(score >= 4.5) return '능숙하고 지도 가능';
+  if(score >= 3.5) return '혼자서 수행';
+  if(score >= 2.5) return '도움 받아 대체로 수행';
+  if(score >= 1.5) return '도움 받아 일부 수행';
+  return '아직 어려움';
+}
+
+function diagBuildResult(){
+  const comps = diagActiveComps();
+  const bank = diagBank(diag.job, diag.level);
+  const j = diag.job ? JOB_BY_NAME[diag.job] : null;
+  const groups = DIAG_GROUPS.map(g => {
+    const list = comps.filter(c => c.group === g.key).map(c => {
+      const items = c.items.map(it => ({ text: it.text, value: diag.answers[it.id] }));
+      return { name: c.name, group: g.key, groupLabel: g.label, score: diagMean(items.map(x => x.value)), items,
+        knowledge: c.knowledge, skill: c.skill, certs: c.certs };
+    });
+    return { key: g.key, label: g.label, comps: list, score: diagMean(list.map(c => c.score)) };
+  }).filter(g => g.comps.length);
+  const allComps = groups.reduce((a, g) => a.concat(g.comps), []);
+  const sorted = allComps.slice().sort((a, b) => b.score - a.score);
+  const k = Math.min(3, Math.floor(allComps.length / 2));
+  const flat = sorted.length && sorted[0].score === sorted[sorted.length - 1].score;
+  const lowItems = allComps.reduce((a, c) => a.concat(c.items.map(it => ({ comp: c.name, text: it.text, value: it.value }))), [])
+    .filter(it => it.value <= 3).sort((a, b) => a.value - b.value).slice(0, 5);
+  const d = new Date();
+  return {
+    version: 1,
+    name: diag.name,
+    org: j ? j.org : '',
+    job: j ? j.job : '',
+    level: diag.level,
+    aiLevel: groups.some(g => g.key === 'ai') ? aiLevelName(rankToCode(diag.level)) : '',
+    scope: diagScopeLabel(diag.scope),
+    date: d.getFullYear() + '. ' + (d.getMonth() + 1) + '. ' + d.getDate() + '.',
+    stamp: '' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'),
+    itemCount: diagItemCount(comps),
+    overall: diagMean(allComps.map(c => c.score)),
+    groups,
+    strengths: flat ? [] : sorted.slice(0, k),
+    developments: flat ? [] : sorted.slice(sorted.length - k).reverse(),
+    lowItems,
+    excluded: groups.some(g => g.key === 'job') || diagScopeGroups(diag.scope).includes('job')
+      ? bank.job.filter(c => diag.excluded.includes(c.name)).map(c => c.name) : [],
+  };
+}
+
+/* ---- 리포트 ---- */
+const DIAG_REPORT_CSS = `
+.gb-report{--ink:#191F28;--soft:#4E5968;--faint:#636E7B;--rule:#E5E8EB;--track:#EEF0F3;--bar:#3D4A5C;
+  color:var(--ink);font-family:'Pretendard','Malgun Gothic','맑은 고딕',-apple-system,sans-serif;font-size:13.5px;line-height:1.6;background:#fff;
+  max-width:860px;margin:0 auto;padding:36px 40px;border:1px solid var(--rule);border-radius:12px;}
+.gb-report *{box-sizing:border-box;}
+.gb-report h1{font-size:25px;margin:0 0 4px;font-weight:800;letter-spacing:-.01em;}
+.gb-report h2{font-size:16px;margin:30px 0 12px;font-weight:700;}
+.gb-report h3{font-size:14px;margin:18px 0 6px;font-weight:700;}
+.gb-rp-sub{color:var(--soft);margin:0 0 16px;}
+.gb-rp-meta{width:100%;border-collapse:collapse;margin-bottom:14px;}
+.gb-rp-meta th,.gb-rp-meta td{border:1px solid var(--rule);padding:7px 10px;text-align:left;font-size:13px;}
+.gb-rp-meta th{background:#F5F6F8;font-weight:600;width:84px;white-space:nowrap;text-align:center;}
+.gb-rp-notice{background:#F5F6F8;border-radius:8px;padding:11px 14px;font-size:12.5px;color:var(--soft);}
+.gb-rp-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;}
+.gb-rp-tile{border:1px solid var(--rule);border-radius:10px;padding:12px 14px;}
+.gb-rp-tile .lab{font-size:12px;color:var(--soft);}
+.gb-rp-tile .val{font-size:26px;font-weight:800;line-height:1.25;font-variant-numeric:tabular-nums;}
+.gb-rp-tile .val small{font-size:12px;font-weight:500;color:var(--faint);margin-left:2px;}
+.gb-rp-tile .band{font-size:11.5px;color:var(--faint);word-break:keep-all;}
+.gb-rp-two{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.gb-rp-box{border:1px solid var(--rule);border-radius:10px;padding:12px 16px;}
+.gb-rp-box h3{margin:0 0 6px;}
+.gb-rp-box ol{margin:0;padding-left:18px;}
+.gb-rp-box li{margin-bottom:3px;}
+.gb-rp-box .score{color:var(--soft);font-variant-numeric:tabular-nums;margin-left:4px;}
+.gb-rp-bars{display:flex;flex-direction:column;gap:7px;}
+.gb-rp-bar{display:grid;grid-template-columns:minmax(150px,230px) 1fr 42px;gap:10px;align-items:center;}
+.gb-rp-bar .nm{font-size:12.5px;line-height:1.35;}
+.gb-rp-bar .tr{position:relative;height:10px;background:var(--track);border-radius:4px;}
+.gb-rp-bar .mk{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:#191F28;box-shadow:0 0 0 1px #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.gb-rp-bar .fl{height:100%;background:var(--bar);border-radius:0 4px 4px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.gb-rp-bar .sc{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;}
+.gb-rp-axis{display:grid;grid-template-columns:minmax(150px,230px) 1fr 42px;gap:10px;font-size:11px;color:var(--faint);margin-top:2px;}
+.gb-rp-axis div:nth-child(2){display:flex;justify-content:space-between;}
+.gb-rp-table{width:100%;border-collapse:collapse;margin-bottom:6px;}
+.gb-rp-table th,.gb-rp-table td{border:1px solid var(--rule);padding:6px 9px;font-size:12.5px;vertical-align:top;}
+.gb-rp-table th{background:#F5F6F8;font-weight:600;text-align:center;}
+.gb-rp-table .c{text-align:center;width:52px;font-variant-numeric:tabular-nums;}
+.gb-rp-table .w{width:150px;}
+.gb-rp-comp{break-inside:avoid;page-break-inside:avoid;}
+.gb-rp-compscore{font-weight:500;color:var(--soft);margin-left:6px;}
+.gb-rp-foot{font-size:11.5px;color:var(--faint);margin-top:18px;}
+.gb-rp-notes{margin:0 0 12px;padding-left:18px;}
+.gb-rp-notes li{margin-bottom:3px;}
+.gb-rp-dist td,.gb-rp-dist th{width:16.6%;}
+.gb-rp-dist .c{width:auto;}
+.gb-rp-askbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:12px;font-size:12px;color:var(--soft);}
+.gb-rp-askbar span{flex:1 1 280px;}
+.gb-rp-legend{font-size:12.5px;color:var(--soft);margin:-4px 0 8px;}
+.gb-rp-legend .mark{display:inline-block;width:2px;height:12px;background:#191F28;margin-right:7px;vertical-align:-2px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.gb-rp-card{border:1px solid var(--rule);border-radius:10px;padding:12px 16px;margin-bottom:10px;break-inside:avoid;page-break-inside:avoid;}
+.gb-rp-card h3{margin:0 0 7px;}
+.gb-rp-card ul{margin:0 0 8px;padding-left:18px;}
+.gb-rp-kv{margin:0 0 4px;font-size:12.5px;}
+.gb-rp-kv b{margin-right:5px;}
+.gb-rp-val{color:var(--soft);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.gb-rp-ask{margin-top:6px;}
+@media (max-width:640px){.gb-report{padding:22px 16px;}.gb-rp-two{grid-template-columns:1fr;}.gb-rp-bar,.gb-rp-axis{grid-template-columns:110px 1fr 36px;}}
+@media print{
+  @page{size:A4;margin:14mm;}
+  .gb-report{border:0;border-radius:0;padding:0;max-width:none;}
+  .gb-report h2{break-after:avoid;page-break-after:avoid;}
+  .gb-rp-box,.gb-rp-tile,.gb-rp-bar{break-inside:avoid;page-break-inside:avoid;}
+  .gb-rp-ask,.gb-rp-askbar{display:none;}
+  .gb-rp-grp{break-inside:avoid;page-break-inside:avoid;}
+  .gb-report h2,.gb-report h3,.gb-rp-legend{break-after:avoid;page-break-after:avoid;}
+  .gb-rp-tiles{grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:7px;}
+  .gb-rp-tile{padding:10px;}
+  .gb-rp-bar .tr{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}`;
+
+function diagLowItems(comp, n){
+  const s = comp.items.slice().sort((a, b) => a.value - b.value);
+  const low = s.filter(it => it.value <= 3).slice(0, n);
+  return low.length ? low : s.slice(0, 1);
+}
+
+function diagAnalysis(r){
+  const fmt = n => n.toFixed(1);
+  const comps = r.groups.reduce((a, g) => a.concat(g.comps), []);
+  const values = comps.reduce((a, c) => a.concat(c.items.map(it => it.value)), []);
+  const dist = [1, 2, 3, 4, 5].map(v => values.filter(x => x === v).length);
+  const pct = n => values.length ? Math.round(n / values.length * 100) : 0;
+  const notes = [];
+
+  notes.push(`전체 점수는 ${fmt(r.overall)}점으로 「${diagBand(r.overall)}」 수준입니다.`);
+  if(r.groups.length > 1){
+    const gs = r.groups.slice().sort((a, b) => b.score - a.score);
+    const hi = gs[0], lo = gs[gs.length - 1], diff = hi.score - lo.score;
+    notes.push(diff >= 0.5
+      ? `역량군 중 ${hi.label}(${fmt(hi.score)})이 가장 높고 ${lo.label}(${fmt(lo.score)})이 가장 낮아 ${fmt(diff)}점 차이가 있습니다.`
+      : `역량군 간 점수 차이는 ${fmt(diff)}점으로 크지 않습니다.`);
+  }
+  if(r.strengths.length){
+    const top = r.strengths[0], bottom = r.developments[0];
+    notes.push(`역량별로는 ${top.name}(${fmt(top.score)})과 ${bottom.name}(${fmt(bottom.score)})의 차이가 ${fmt(top.score - bottom.score)}점입니다.`);
+  } else {
+    notes.push('역량별 점수가 같거나 역량 수가 적어 강점과 개발 역량을 구분하지 않았습니다.');
+  }
+  const high = pct(dist[3] + dist[4]), low = pct(dist[0] + dist[1]);
+  if(dist.some(n => n === values.length)){
+    notes.push('모든 문항에 같은 점수로 응답했습니다. 문항별 차이를 다시 살펴보면 더 유용한 결과를 얻을 수 있습니다.');
+  } else if(high >= 80){
+    notes.push(`4~5점 응답이 ${high}%로 대부분입니다. 실제 업무 사례를 근거로 한 번 더 점검해 보세요.`);
+  } else {
+    notes.push(`문항 중 4~5점은 ${high}%, 1~2점은 ${low}%입니다.`);
+  }
+
+  const spread = comps.map(c => {
+    const s = c.items.slice().sort((a, b) => b.value - a.value);
+    return { name: c.name, score: c.score, hi: s[0], lo: s[s.length - 1], gap: s[0].value - s[s.length - 1].value };
+  }).filter(x => x.gap >= 3).sort((a, b) => b.gap - a.gap).slice(0, 3);
+
+  const focus = r.developments.map(c => ({
+    comp: c,
+    low: diagLowItems(c, 2),
+  }));
+  const shown = new Set();
+  focus.forEach(f => f.low.forEach(it => shown.add(it.text)));
+  const otherLow = comps.reduce((a, c) => a.concat(c.items.map(it => ({ comp: c.name, text: it.text, value: it.value }))), [])
+    .filter(it => it.value <= 2 && !shown.has(it.text))
+    .sort((a, b) => a.value - b.value).slice(0, 5);
+
+  return { notes, dist, pct, spread, focus, otherLow };
+}
+
+function diagAskPrompt(r, target){
+  const fmt = n => n.toFixed(1);
+  const head = [
+    `직무·직급 : ${[r.job, r.level].filter(Boolean).join(' · ')}`,
+    `진단 범위 : ${r.scope} (자가진단, 5점 척도)`,
+  ];
+  const rules = '자가진단 결과이므로 단정하지 말고, 실존이 확인된 교육·자격만 안내해 주세요. 답변은 핵심 위주로 짧게, 굵게와 목록 서식만 사용해 주세요.';
+  const lowLines = list => list.map(it => `- ${it.text} (${it.value}점)`).join('\n');
+  if(target){
+    const c = r.groups.reduce((a, g) => a.concat(g.comps), []).find(x => x.name === target);
+    const low = diagLowItems(c, 3);
+    return `제 역량 자가진단 결과를 바탕으로 「${c.name}」 역량의 개발 방법을 추천해 주세요.\n\n`
+      + head.join('\n') + `\n역량 점수 : ${fmt(c.score)}점 (${c.groupLabel})\n\n상대적으로 낮게 응답한 행동\n${lowLines(low)}\n\n`
+      + `다음 순서로 알려 주세요.\n1. 업무에서 바로 해 볼 실천 방법\n2. 추천 교육·학습 방법\n3. 3개월 실행 순서\n\n${rules}`;
+  }
+  const a = diagAnalysis(r);
+  return '제 역량 자가진단 결과를 바탕으로 교육과 역량 개발 방법을 추천해 주세요.\n\n'
+    + head.join('\n') + `\n전체 점수 : ${fmt(r.overall)}점\n`
+    + `역량군 점수 : ${r.groups.map(g => g.label + ' ' + fmt(g.score)).join(', ')}\n`
+    + (r.strengths.length ? `상대적 강점 : ${r.strengths.map(c => c.name + ' ' + fmt(c.score)).join(', ')}\n` : '')
+    + (r.developments.length ? `우선 개발 역량 : ${r.developments.map(c => c.name + ' ' + fmt(c.score)).join(', ')}\n` : '')
+    + (a.focus.length ? `\n상대적으로 낮게 응답한 행동\n${lowLines(a.focus.reduce((x, f) => x.concat(f.low), []))}\n` : '')
+    + `\n우선 개발 역량별로 다음을 알려 주세요.\n1. 업무에서 바로 해 볼 실천 방법\n2. 추천 교육·학습 방법\n그리고 마지막에 3개월 실행 순서를 정리해 주세요.\n\n${rules}`;
+}
+
+function diagAsk(target){
+  const text = diagAskPrompt(diagBuildResult(), target);
+  openAI();
+  setTimeout(() => sendAIMessage(text), 150);
+}
+
+function diagReportInner(r, forFile){
+  const fmt = n => n.toFixed(1);
+  const a = diagAnalysis(r);
+  const tile = (lab, score) => `<div class="gb-rp-tile"><div class="lab">${lab}</div>
+    <div class="val">${fmt(score)}<small>/ 5</small></div><div class="band">${diagBand(score)}</div></div>`;
+  const listBox = (title, list) => `<div class="gb-rp-box"><h3>${title}</h3>
+    <ol>${list.map(c => `<li>${escapeHtml(c.name)}<span class="score">${fmt(c.score)}</span></li>`).join('')}</ol></div>`;
+  const askBtn = (target, label) => forFile ? ''
+    : `<button class="diag-btn gb-rp-ask" data-diag-ask="${escapeHtml(target)}">${label}</button>`;
+  const metaList = (label, list) => (list && list.length)
+    ? `<p class="gb-rp-kv"><b>${label}</b> ${list.slice(0, 3).map(x => escapeHtml(diagCleanText(x))).join(' · ')}</p>` : '';
+
+  return `
+    <h1>역량 자가진단 리포트</h1>
+    <p class="gb-rp-sub">GB 역량사전 행동지표 기준</p>
+    <table class="gb-rp-meta">
+      <tr><th>성명</th><td>${escapeHtml(r.name)}</td><th>직무</th><td>${escapeHtml([r.org, r.job].filter(Boolean).join(' · '))}</td></tr>
+      <tr><th>직급</th><td>${escapeHtml(r.level)}</td><th>진단일</th><td>${escapeHtml(r.date)}</td></tr>
+      <tr><th>진단 범위</th><td>${escapeHtml(r.scope)}</td><th>문항 수</th><td>${r.itemCount}문항</td></tr>
+    </table>
+    <div class="gb-rp-notice">본인 확인용 자료입니다. 평가 자료가 아니며, 자기 인식을 바탕으로 한 결과이므로 다른 사람과 비교하는 기준으로 쓰지 않습니다. 교육·경력 상담 등에 필요하면 인재경영팀에 제출해 주세요.</div>
+
+    <h2>진단 요약</h2>
+    <div class="gb-rp-tiles">
+      ${r.groups.length > 1 ? tile('전체', r.overall) : ''}
+      ${r.groups.map(g => tile(g.label, g.score)).join('')}
+    </div>
+
+    <h2>종합 분석</h2>
+    <ul class="gb-rp-notes">${a.notes.map(n => `<li>${escapeHtml(n)}</li>`).join('')}</ul>
+    <table class="gb-rp-table gb-rp-dist">
+      <thead><tr><th>응답</th>${[1, 2, 3, 4, 5].map(v => `<th>${v}점</th>`).join('')}</tr></thead>
+      <tbody><tr><td class="c">문항 수</td>${a.dist.map(n => `<td class="c">${n}개 (${a.pct(n)}%)</td>`).join('')}</tr></tbody>
+    </table>
+
+    ${r.strengths.length ? `<h2>강점과 개발 필요 역량</h2>
+    <div class="gb-rp-two">
+      ${listBox('상대적 강점', r.strengths)}
+      ${listBox('우선 개발 역량', r.developments)}
+    </div>` : ''}
+    ${forFile ? '' : `<div class="gb-rp-askbar">
+      ${askBtn('', '✦ 역량 AI에게 교육·개발 방법 추천받기')}
+      <span>이름을 뺀 직무·직급, 점수, 낮게 응답한 행동이 AI 답변 생성을 위해 전송됩니다. 버튼을 누르기 전에는 전송되지 않습니다.</span>
+    </div>`}
+
+    <h2>역량별 점수</h2>
+    <p class="gb-rp-legend"><i class="mark"></i>세로선은 내 전체 평균 ${fmt(r.overall)}점입니다. 역량군 안에서 점수가 높은 순으로 표시했습니다.</p>
+    ${r.groups.map(g => `
+      <div class="gb-rp-grp"><h3>${g.label}</h3>
+      <div class="gb-rp-bars">
+        ${g.comps.slice().sort((x, y) => y.score - x.score).map(c => `<div class="gb-rp-bar">
+          <div class="nm">${escapeHtml(c.name)}</div>
+          <div class="tr"><div class="fl" style="width:${c.score / 5 * 100}%"></div><div class="mk" style="left:${r.overall / 5 * 100}%"></div></div>
+          <div class="sc">${fmt(c.score)}</div>
+        </div>`).join('')}
+      </div></div>`).join('')}
+    <div class="gb-rp-axis"><div></div><div><span>0</span><span>5점</span></div><div></div></div>
+
+    ${a.focus.length ? `<h2>우선 개발 역량 분석</h2>
+    ${a.focus.map(f => `<div class="gb-rp-card">
+      <h3>${escapeHtml(f.comp.name)}<span class="gb-rp-compscore">${f.comp.groupLabel} · ${fmt(f.comp.score)}점 · ${diagBand(f.comp.score)}</span></h3>
+      <p class="gb-rp-kv"><b>상대적으로 낮게 응답한 행동</b></p>
+      <ul>${f.low.map(it => `<li>${escapeHtml(it.text)} <span class="gb-rp-val">${it.value}점</span></li>`).join('')}</ul>
+      ${metaList('필요 지식', f.comp.knowledge)}
+      ${metaList('필요 기술', f.comp.skill)}
+      ${metaList('관련 자격', f.comp.certs)}
+      ${askBtn(f.comp.name, '✦ 이 역량 개발 방법 물어보기')}
+    </div>`).join('')}` : ''}
+
+    ${a.spread.length ? `<h2>문항 간 차이가 큰 역량</h2>
+    <p class="gb-rp-legend">평균 점수만으로는 드러나지 않는 부분입니다. 잘하는 행동과 어려운 행동이 함께 있습니다.</p>
+    <table class="gb-rp-table">
+      <thead><tr><th class="w">역량</th><th>높게 응답한 행동</th><th>낮게 응답한 행동</th></tr></thead>
+      <tbody>${a.spread.map(s => `<tr><td class="w">${escapeHtml(s.name)}</td><td>${escapeHtml(s.hi.text)} <span class="gb-rp-val">${s.hi.value}점</span></td><td>${escapeHtml(s.lo.text)} <span class="gb-rp-val">${s.lo.value}점</span></td></tr>`).join('')}</tbody>
+    </table>` : ''}
+
+    ${a.otherLow.length ? `<h2>그 외 낮게 응답한 행동</h2>
+    <table class="gb-rp-table">
+      <thead><tr><th class="w">역량</th><th>행동지표</th><th class="c">응답</th></tr></thead>
+      <tbody>${a.otherLow.map(it => `<tr><td class="w">${escapeHtml(it.comp)}</td><td>${escapeHtml(it.text)}</td><td class="c">${it.value}</td></tr>`).join('')}</tbody>
+    </table>` : ''}
+
+    ${r.excluded.length ? `<h2>진단에서 제외한 직무역량</h2><p>${r.excluded.map(escapeHtml).join(', ')}</p>` : ''}
+
+    <h2>문항별 응답</h2>
+    ${r.groups.map(g => g.comps.map(c => `<div class="gb-rp-comp">
+      <h3>${escapeHtml(c.name)}<span class="gb-rp-compscore">${g.label} · ${fmt(c.score)}점</span></h3>
+      <table class="gb-rp-table">
+        <thead><tr><th>행동지표</th><th class="c">응답</th></tr></thead>
+        <tbody>${c.items.map(it => `<tr><td>${escapeHtml(it.text)}</td><td class="c">${it.value}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>`).join('')).join('')}
+
+    <p class="gb-rp-foot">응답 기준 : ${DIAG_SCALE.map(s => s.v + ' ' + s.t).join(' / ')}<br>
+    역량 점수는 문항 응답의 평균이고, 역량군과 전체 점수는 역량 점수의 평균입니다.${r.aiLevel ? ' AI 활용역량은 ' + escapeHtml(r.aiLevel) + ' 기준입니다.' : ''}</p>`;
+}
+
+function renderDiagReportScreen(){
+  const r = diagBuildResult();
+  return `
+  <div class="diag-wrap">
+    <style>${DIAG_REPORT_CSS}</style>
+    <div class="page-top"><div class="breadcrumb">${escapeHtml(diagTitle())} <span style="opacity:.4;">›</span> 진단 리포트</div>${homeButtonHtml()}</div>
+    <div class="diag-report-tools">
+      <label class="diag-name">성명 <input type="text" id="diag-name" maxlength="30" value="${escapeHtml(diag.name)}" placeholder="리포트에 표시할 이름"></label>
+      <button class="diag-btn primary" data-diag-action="download">HTML 파일 다운로드</button>
+      <button class="diag-btn" data-diag-action="edit">응답 수정하기</button>
+      <button class="diag-btn" data-diag-action="clear">응답 지우기</button>
+    </div>
+    <p class="diag-note" style="margin:0 0 16px;">내려받은 파일을 열면 인쇄 또는 PDF 저장 버튼이 있습니다. 공용 PC라면 다운로드 후 응답을 지워 주세요.</p>
+    <div class="gb-report" id="diag-report">${diagReportInner(r)}</div>
+  </div>`;
+}
+
+function diagReportFileHtml(r){
+  const title = '역량 자가진단 리포트' + (r.name ? ' - ' + r.name : '');
+  const data = JSON.stringify({ version: r.version, name: r.name, org: r.org, job: r.job, level: r.level, scope: r.scope, date: r.date,
+    overall: r.overall, excluded: r.excluded,
+    groups: r.groups.map(g => ({ key: g.key, score: g.score, comps: g.comps.map(c => ({ name: c.name, score: c.score, items: c.items.map(it => it.value) })) })) }).replace(/</g, '\\u003c');
+  return '<!doctype html>\n<html lang="ko"><head><meta charset="utf-8">'
+    + '<meta name="viewport" content="width=device-width,initial-scale=1">'
+    + '<title>' + escapeHtml(title) + '</title><style>'
+    + 'body{margin:0;padding:20px 16px 40px;background:#F5F6F8;}'
+    + '.gb-toolbar{max-width:860px;margin:0 auto 12px;text-align:right;}'
+    + '.gb-toolbar button{font:inherit;font-family:"Malgun Gothic",sans-serif;font-size:14px;font-weight:700;padding:9px 18px;border:0;border-radius:8px;background:#E0002A;color:#fff;cursor:pointer;}'
+    + '@media print{body{padding:0;background:#fff;}.gb-toolbar{display:none;}}'
+    + DIAG_REPORT_CSS
+    + '</style></head><body>'
+    + '<div class="gb-toolbar"><button type="button" onclick="window.print()">인쇄 / PDF 저장</button></div>'
+    + '<div class="gb-report">' + diagReportInner(r, true) + '</div>'
+    + '<script type="application/json" id="gb-diagnosis-data">' + data + '<\/script>'
+    + '</body></html>';
+}
+
+function diagDownload(){
+  const r = diagBuildResult();
+  const safe = s => (s || '').replace(/[\\/:*?"<>|\s]+/g, '');
+  const fname = ['GB역량진단리포트', safe(r.name), safe(r.job), safe(r.level), r.stamp].filter(Boolean).join('_') + '.html';
+  const blob = new Blob([diagReportFileHtml(r)], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = fname;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+/* ---- 이벤트 ---- */
+function diagShow(keepScroll){
+  const c = document.getElementById('content');
+  const top = c.scrollTop;
+  c.innerHTML = renderDiagnosis();
+  attachDiagnosisEvents();
+  c.scrollTop = keepScroll ? top : 0;
+}
+
+function attachDiagnosisEvents(){
+  const wrap = document.querySelector('.diag-wrap');
+  if(!wrap) return;
+
+  const reportEl = document.getElementById('diag-report');
+  if(reportEl){
+    reportEl.addEventListener('click', e => {
+      const ask = e.target.closest('[data-diag-ask]');
+      if(ask) diagAsk(ask.dataset.diagAsk);
+    });
+  }
+
+  wrap.querySelectorAll('[data-diag-job]').forEach(el => {
+    el.addEventListener('change', () => {
+      const name = el.dataset.diagJob;
+      diag.excluded = diag.excluded.filter(x => x !== name);
+      if(!el.checked) diag.excluded.push(name);
+      diagSave();
+      diagShow(true);
+    });
+  });
+
+  wrap.querySelectorAll('.diag-q input[type=radio]').forEach(el => {
+    el.addEventListener('change', () => {
+      diag.answers[el.name] = Number(el.value);
+      diagSave();
+      const q = el.closest('.diag-q');
+      q.classList.remove('is-missing');
+      q.querySelectorAll('.diag-option').forEach(o => o.classList.toggle('is-selected', o.contains(el)));
+      const comps = diagActiveComps();
+      const answered = diagAnsweredCount(comps);
+      document.getElementById('diag-progress-num').textContent = answered;
+      document.getElementById('diag-progress-fill').style.width = (answered / diagItemCount(comps) * 100) + '%';
+      if(!wrap.querySelector('.diag-q.is-missing')) document.getElementById('diag-missing-msg').textContent = '';
+    });
+  });
+
+  const nameInput = document.getElementById('diag-name');
+  if(nameInput){
+    nameInput.addEventListener('input', () => {
+      diag.name = nameInput.value;
+      diagSave();
+      document.getElementById('diag-report').innerHTML = diagReportInner(diagBuildResult());
+    });
+  }
+
+  wrap.querySelectorAll('[data-diag-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.diagAction;
+      if(action === 'start'){
+        const comps = diagActiveComps();
+        const first = comps.findIndex(c => c.items.some(it => !diag.answers[it.id]));
+        diagNav('questions', first < 0 ? 0 : first);
+      } else if(action === 'prev'){
+        if(diag.page > 0) diagNav('questions', diag.page - 1); else diagNav('intro');
+      } else if(action === 'next'){
+        const comps = diagActiveComps();
+        const c = comps[diag.page];
+        const miss = c.items.find(it => !diag.answers[it.id]);
+        if(miss){
+          diag.missing = true;
+          diagShow(true);
+          const el = document.querySelector('.diag-q.is-missing');
+          if(el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        if(diag.page < comps.length - 1) diagNav('questions', diag.page + 1); else diagNav('report');
+      } else if(action === 'download'){
+        diagDownload();
+      } else if(action === 'edit'){
+        diagNav('questions', 0);
+      } else if(action === 'clear'){
+        if(!window.confirm('이 브라우저에 저장된 이 직무·직급의 응답을 모두 지울까요? 내려받은 리포트 파일은 지워지지 않습니다.')) return;
+        try{ window.localStorage.removeItem(diagStorageKey(diag.job, diag.level)); }catch(e){}
+        diag.answers = {}; diag.excluded = []; diag.name = '';
+        diagNav('intro');
+      }
     });
   });
 }
@@ -1630,14 +2487,19 @@ ${jobList}
 7. AI 관련 질문에는 「사내 AI 사용 가이드라인」·「허용 도구 목록」 준수와 민감정보 미입력 원칙을 함께 상기시켜 주세요.`;
 }
 
+function setAIOverlay(open){
+  document.getElementById('ai-overlay').classList.toggle('open', open);
+  if(open && aiState.history.length === 0) renderAIWelcome();
+}
 function openAI(){
-  document.getElementById('ai-overlay').classList.add('open');
-  if(aiState.history.length === 0){
-    renderAIWelcome();
-  }
+  if(document.getElementById('ai-overlay').classList.contains('open')) return;
+  writeHistory('replaceState', Object.assign({}, history.state, { scroll: currentScroll() }));
+  writeHistory('pushState', Object.assign({}, history.state, { ai: true, idx: ((history.state && history.state.idx) || 0) + 1 }));
+  setAIOverlay(true);
 }
 function closeAI(){
-  document.getElementById('ai-overlay').classList.remove('open');
+  if(history.state && history.state.ai) history.back();
+  else setAIOverlay(false);
 }
 
 function renderAIWelcome(){
@@ -1765,7 +2627,7 @@ function initGlobalNav(){
   });
 }
 
-render();
+initRouter();
 initAI();
 initGlobalNav();
 document.getElementById('mobile-menu-btn').addEventListener('click', () => {
