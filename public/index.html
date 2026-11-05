@@ -562,6 +562,7 @@
   .diag-job-item input{margin-top:4px; width:16px; height:16px; flex-shrink:0;}
   .diag-job-count{font-size:12px; color:var(--ink-soft); margin-left:7px;}
   .diag-job-def{display:block; font-size:12.5px; color:var(--ink-soft); line-height:1.55; margin-top:2px;}
+  .diag-scale-title{font-size:14px; font-weight:700; margin:14px 0 8px;}
   .diag-scale-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; font-size:13.5px;}
   .diag-scale-num{display:inline-flex; width:22px; height:22px; align-items:center; justify-content:center; border-radius:6px; background:var(--surface-2); font-weight:700; font-size:12px; margin-right:9px;}
   .diag-nav{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:26px;}
@@ -1666,13 +1667,30 @@ function attachMyCompEvents(){
 }
 
 /* ============== 역량 자가진단 ============== */
-const DIAG_SCALE = [
-  {v:1, t:'아직 어렵다'},
-  {v:2, t:'도움을 받으면 일부 할 수 있다'},
-  {v:3, t:'도움을 받으면 대체로 할 수 있다'},
-  {v:4, t:'혼자서 할 수 있다'},
-  {v:5, t:'능숙하게 하고 다른 사람을 지도할 수 있다'},
+// 공통·역할역량은 평소 행동(~한다)을 묻는 동의 척도, AI·직무역량은 숙련도를 묻는 수행 수준 척도
+const DIAG_SCALE_KINDS = [
+  {
+    label: '동의 정도', groups: ['common', 'role'],
+    scale: [
+      {v:1, t:'매우 그렇지 않다'},
+      {v:2, t:'그렇지 않다'},
+      {v:3, t:'보통이다'},
+      {v:4, t:'그렇다'},
+      {v:5, t:'매우 그렇다'},
+    ],
+  },
+  {
+    label: '수행 수준', groups: ['ai', 'job'],
+    scale: [
+      {v:1, t:'아직 어렵다'},
+      {v:2, t:'도움을 받으면 일부 할 수 있다'},
+      {v:3, t:'도움을 받으면 대체로 할 수 있다'},
+      {v:4, t:'혼자서 할 수 있다'},
+      {v:5, t:'능숙하게 하고 다른 사람을 지도할 수 있다'},
+    ],
+  },
 ];
+function diagScaleKindOf(groupKey){ return DIAG_SCALE_KINDS.find(k => k.groups.includes(groupKey)); }
 const DIAG_GROUPS = [
   {key:'common', label:'공통역량'},
   {key:'role', label:'역할역량'},
@@ -1784,7 +1802,7 @@ function diagLoad(job, level){
 function diagSave(){
   try{
     window.localStorage.setItem(diagStorageKey(diag.job, diag.level),
-      JSON.stringify({ answers: diag.answers, excluded: diag.excluded, name: diag.name }));
+      JSON.stringify({ sv: 2, answers: diag.answers, excluded: diag.excluded, name: diag.name }));
   }catch(e){ /* 저장이 막힌 환경에서도 진단은 계속한다 */ }
 }
 
@@ -1799,6 +1817,8 @@ function diagEnsure(route){
       excluded: saved.excluded || [],
       name: saved.name || '',
       missing: false,
+      // 응답 척도가 바뀌기 전에 저장한 공통·역할역량 응답이 있는지
+      oldScale: saved.sv !== 2 && Object.keys(saved.answers || {}).some(k => /^(common|role)\|/.test(k)),
     };
   }
   // 화면 단계는 주소(route)를 따른다. 응답이 지워졌거나 미완료면 리포트 대신 안내 화면으로
@@ -1888,7 +1908,7 @@ function renderDiagIntro(){
     <div class="home-hero" style="margin-bottom:22px;">
       <div class="eyebrow">Self Assessment</div>
       <h1 style="font-size:26px;">${escapeHtml(diagTitle())} ${diagScopeLabel(diag.scope)} 진단</h1>
-      <p>행동지표를 읽고 현재 본인의 수행 수준에 가장 가까운 항목을 선택해 주세요. 평가가 아니라 본인의 강점과 개발할 부분을 확인하기 위한 진단입니다.</p>
+      <p>행동지표를 읽고 현재 본인에게 가장 가까운 응답을 선택해 주세요. 평가가 아니라 본인의 강점과 개발할 부분을 확인하기 위한 진단입니다.</p>
     </div>
     <div class="section-block" style="max-width:none;">
       <h2>진단 구성</h2>
@@ -1902,9 +1922,12 @@ function renderDiagIntro(){
     ${jobList}
     <div class="section-block" style="max-width:none;">
       <h2>응답 기준</h2>
-      <ol class="diag-scale-list">
-        ${DIAG_SCALE.map(s => `<li><span class="diag-scale-num">${s.v}</span>${s.t}</li>`).join('')}
-      </ol>
+      ${diag.oldScale ? '<p class="diag-missing" style="margin:0 0 12px;">응답 기준이 바뀌었습니다. 이전에 답한 공통·역할역량은 새 기준으로 다시 확인해 주세요.</p>' : ''}
+      ${DIAG_SCALE_KINDS.filter(k => k.groups.some(g => groups.includes(g) && bank[g].length)).map(k => `
+        <h3 class="diag-scale-title">${DIAG_GROUPS.filter(g => k.groups.includes(g.key) && groups.includes(g.key) && bank[g.key].length).map(g => g.label).join('·')} : ${k.label}</h3>
+        <ol class="diag-scale-list">
+          ${k.scale.map(s => `<li><span class="diag-scale-num">${s.v}</span>${s.t}</li>`).join('')}
+        </ol>`).join('')}
       <p class="diag-note">※ 응답은 이 브라우저에만 임시 저장됩니다. 리포트에서 AI 추천을 직접 요청할 때만 이름을 뺀 결과 요약이 전송됩니다.</p>
     </div>
     <div class="diag-nav">
@@ -1940,7 +1963,7 @@ function renderDiagQuestions(){
         return `<fieldset class="diag-q ${diag.missing && !val ? 'is-missing' : ''}" data-diag-item="${escapeHtml(it.id)}">
           <legend><span class="diag-q-num">${i + 1}</span>${escapeHtml(it.text)}</legend>
           <div class="diag-options">
-            ${DIAG_SCALE.map(s => `
+            ${diagScaleKindOf(c.group).scale.map(s => `
               <label class="diag-option ${val === s.v ? 'is-selected' : ''}">
                 <input type="radio" name="${escapeHtml(it.id)}" value="${s.v}" ${val === s.v ? 'checked' : ''}>
                 <span class="diag-option-num">${s.v}</span>
@@ -1961,7 +1984,14 @@ function renderDiagQuestions(){
 /* ---- 결과 계산 ---- */
 function diagMean(arr){ return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
 
-function diagBand(score){
+function diagBand(score, groupKey){
+  if(diagScaleKindOf(groupKey).groups.includes('common')){
+    if(score >= 4.5) return '매우 그렇다';
+    if(score >= 3.5) return '그렇다';
+    if(score >= 2.5) return '보통이다';
+    if(score >= 1.5) return '그렇지 않다';
+    return '매우 그렇지 않다';
+  }
   if(score >= 4.5) return '능숙하고 지도 가능';
   if(score >= 3.5) return '혼자서 수행';
   if(score >= 2.5) return '도움 받아 대체로 수행';
@@ -1981,15 +2011,18 @@ function diagBuildResult(){
     });
     return { key: g.key, label: g.label, comps: list, score: diagMean(list.map(c => c.score)) };
   }).filter(g => g.comps.length);
-  const allComps = groups.reduce((a, g) => a.concat(g.comps), []);
-  const sorted = allComps.slice().sort((a, b) => b.score - a.score);
-  const k = Math.min(3, Math.floor(allComps.length / 2));
-  const flat = sorted.length && sorted[0].score === sorted[sorted.length - 1].score;
-  const lowItems = allComps.reduce((a, c) => a.concat(c.items.map(it => ({ comp: c.name, text: it.text, value: it.value }))), [])
-    .filter(it => it.value <= 3).sort((a, b) => a.value - b.value).slice(0, 5);
+  // 척도가 다른 역량끼리 줄 세우지 않도록 역량군 안에서만 강점과 개발 역량을 고른다
+  const strengths = [], developments = [];
+  groups.forEach(g => {
+    const s = g.comps.slice().sort((a, b) => b.score - a.score);
+    if(s.length < 2 || s[0].score === s[s.length - 1].score) return;
+    const k = groups.length === 1 ? Math.min(3, Math.floor(s.length / 2)) : 1;
+    strengths.push(...s.slice(0, k));
+    developments.push(...s.slice(s.length - k).reverse());
+  });
   const d = new Date();
   return {
-    version: 1,
+    version: 2,
     name: diag.name,
     org: j ? j.org : '',
     job: j ? j.job : '',
@@ -1999,11 +2032,9 @@ function diagBuildResult(){
     date: d.getFullYear() + '. ' + (d.getMonth() + 1) + '. ' + d.getDate() + '.',
     stamp: '' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'),
     itemCount: diagItemCount(comps),
-    overall: diagMean(allComps.map(c => c.score)),
     groups,
-    strengths: flat ? [] : sorted.slice(0, k),
-    developments: flat ? [] : sorted.slice(sorted.length - k).reverse(),
-    lowItems,
+    strengths,
+    developments,
     excluded: groups.some(g => g.key === 'job') || diagScopeGroups(diag.scope).includes('job')
       ? bank.job.filter(c => diag.excluded.includes(c.name)).map(c => c.name) : [],
   };
@@ -2091,49 +2122,56 @@ function diagAnalysis(r){
   const fmt = n => n.toFixed(1);
   const comps = r.groups.reduce((a, g) => a.concat(g.comps), []);
   const values = comps.reduce((a, c) => a.concat(c.items.map(it => it.value)), []);
-  const dist = [1, 2, 3, 4, 5].map(v => values.filter(x => x === v).length);
-  const pct = n => values.length ? Math.round(n / values.length * 100) : 0;
   const notes = [];
 
-  notes.push(`전체 점수는 ${fmt(r.overall)}점으로 「${diagBand(r.overall)}」 수준입니다.`);
-  if(r.groups.length > 1){
-    const gs = r.groups.slice().sort((a, b) => b.score - a.score);
-    const hi = gs[0], lo = gs[gs.length - 1], diff = hi.score - lo.score;
+  // 척도가 같은 역량군끼리만 비교한다
+  DIAG_SCALE_KINDS.forEach(kind => {
+    const gs = r.groups.filter(g => kind.groups.includes(g.key)).sort((a, b) => b.score - a.score);
+    if(gs.length !== 2) return;
+    const diff = gs[0].score - gs[1].score;
     notes.push(diff >= 0.5
-      ? `역량군 중 ${hi.label}(${fmt(hi.score)})이 가장 높고 ${lo.label}(${fmt(lo.score)})이 가장 낮아 ${fmt(diff)}점 차이가 있습니다.`
-      : `역량군 간 점수 차이는 ${fmt(diff)}점으로 크지 않습니다.`);
-  }
-  if(r.strengths.length){
-    const top = r.strengths[0], bottom = r.developments[0];
-    notes.push(`역량별로는 ${top.name}(${fmt(top.score)})과 ${bottom.name}(${fmt(bottom.score)})의 차이가 ${fmt(top.score - bottom.score)}점입니다.`);
-  } else {
-    notes.push('역량별 점수가 같거나 역량 수가 적어 강점과 개발 역량을 구분하지 않았습니다.');
-  }
-  const high = pct(dist[3] + dist[4]), low = pct(dist[0] + dist[1]);
-  if(dist.some(n => n === values.length)){
+      ? `${gs[0].label}(${fmt(gs[0].score)})이 ${gs[1].label}(${fmt(gs[1].score)})보다 ${fmt(diff)}점 높습니다.`
+      : `${gs[0].label}과 ${gs[1].label}의 점수 차이는 ${fmt(diff)}점으로 크지 않습니다.`);
+  });
+  r.groups.forEach(g => {
+    if(g.comps.length < 2) return;
+    const s = g.comps.slice().sort((a, b) => b.score - a.score);
+    const top = s[0], bottom = s[s.length - 1];
+    if(top.score !== bottom.score) notes.push(`${g.label}에서는 ${top.name}(${fmt(top.score)}) 점수가 가장 높고 ${bottom.name}(${fmt(bottom.score)}) 점수가 가장 낮습니다.`);
+  });
+  if(!r.strengths.length) notes.push('역량별 점수가 같거나 역량 수가 적어 강점과 개발 역량을 구분하지 않았습니다.');
+
+  const high = values.length ? Math.round(values.filter(v => v >= 4).length / values.length * 100) : 0;
+  if(values.length && values.every(v => v === values[0])){
     notes.push('모든 문항에 같은 점수로 응답했습니다. 문항별 차이를 다시 살펴보면 더 유용한 결과를 얻을 수 있습니다.');
   } else if(high >= 80){
     notes.push(`4~5점 응답이 ${high}%로 대부분입니다. 실제 업무 사례를 근거로 한 번 더 점검해 보세요.`);
-  } else {
-    notes.push(`문항 중 4~5점은 ${high}%, 1~2점은 ${low}%입니다.`);
   }
+
+  const dist = DIAG_SCALE_KINDS.map(kind => {
+    const vals = r.groups.filter(g => kind.groups.includes(g.key))
+      .reduce((a, g) => a.concat(g.comps.reduce((x, c) => x.concat(c.items.map(it => it.value)), [])), []);
+    return {
+      label: kind.label,
+      groups: r.groups.filter(g => kind.groups.includes(g.key)).map(g => g.label).join('·'),
+      total: vals.length,
+      counts: [1, 2, 3, 4, 5].map(v => vals.filter(x => x === v).length),
+    };
+  }).filter(d => d.total);
 
   const spread = comps.map(c => {
     const s = c.items.slice().sort((a, b) => b.value - a.value);
     return { name: c.name, score: c.score, hi: s[0], lo: s[s.length - 1], gap: s[0].value - s[s.length - 1].value };
   }).filter(x => x.gap >= 3).sort((a, b) => b.gap - a.gap).slice(0, 3);
 
-  const focus = r.developments.map(c => ({
-    comp: c,
-    low: diagLowItems(c, 2),
-  }));
+  const focus = r.developments.map(c => ({ comp: c, low: diagLowItems(c, 2) }));
   const shown = new Set();
   focus.forEach(f => f.low.forEach(it => shown.add(it.text)));
   const otherLow = comps.reduce((a, c) => a.concat(c.items.map(it => ({ comp: c.name, text: it.text, value: it.value }))), [])
     .filter(it => it.value <= 2 && !shown.has(it.text))
     .sort((a, b) => a.value - b.value).slice(0, 5);
 
-  return { notes, dist, pct, spread, focus, otherLow };
+  return { notes, dist, spread, focus, otherLow };
 }
 
 function diagAskPrompt(r, target){
@@ -2144,11 +2182,12 @@ function diagAskPrompt(r, target){
   ];
   const rules = '자가진단 결과이므로 단정하지 말고, 실존이 확인된 교육·자격만 안내해 주세요. 답변은 핵심 위주로 짧게, 굵게와 목록 서식만 사용해 주세요.';
   const lowLines = list => list.map(it => `- ${it.text} (${it.value}점)`).join('\n');
+  const scaleText = kind => `${kind.label}(1 ${kind.scale[0].t} ~ 5 ${kind.scale[4].t})`;
   if(target){
     const c = r.groups.reduce((a, g) => a.concat(g.comps), []).find(x => x.name === target);
     const low = diagLowItems(c, 3);
     return `제 역량 자가진단 결과를 바탕으로 「${c.name}」 역량의 개발 방법을 추천해 주세요.\n\n`
-      + head.join('\n') + `\n역량 점수 : ${fmt(c.score)}점 (${c.groupLabel})\n\n상대적으로 낮게 응답한 행동\n${lowLines(low)}\n\n`
+      + head.join('\n') + `\n응답 척도 : ${scaleText(diagScaleKindOf(c.group))}\n역량 점수 : ${fmt(c.score)}점 (${c.groupLabel})\n\n상대적으로 낮게 응답한 행동\n${lowLines(low)}\n\n`
       + `다음 순서로 알려 주세요.\n1. 업무에서 바로 해 볼 실천 방법\n2. 추천 교육·학습 방법\n3. 3개월 실행 순서\n\n${rules}`;
   }
   const a = diagAnalysis(r);
@@ -2156,12 +2195,14 @@ function diagAskPrompt(r, target){
   const lowList = a.focus.length
     ? a.focus.reduce((x, f) => x.concat(f.low), [])
     : comps.reduce((x, c) => x.concat(c.items), []).filter(it => it.value <= 3).sort((p, q) => p.value - q.value).slice(0, 6);
+  const kinds = DIAG_SCALE_KINDS.filter(k => r.groups.some(g => k.groups.includes(g.key)));
+  const scaleLine = kinds.map(k => `${r.groups.filter(g => k.groups.includes(g.key)).map(g => g.label).join('·')}은 ${scaleText(k)}`).join(', ');
   return '제 역량 자가진단 결과를 바탕으로 교육과 역량 개발 방법을 추천해 주세요.\n\n'
-    + head.join('\n') + `\n전체 점수 : ${fmt(r.overall)}점\n`
+    + head.join('\n') + `\n응답 척도 : ${scaleLine}${kinds.length > 1 ? '. 척도가 다르므로 두 묶음의 점수를 직접 비교하지 말아 주세요.' : ''}\n`
     + `역량군 점수 : ${r.groups.map(g => g.label + ' ' + fmt(g.score)).join(', ')}\n`
     + `역량별 점수 : ${comps.map(c => c.name + ' ' + fmt(c.score)).join(', ')}\n`
-    + (r.strengths.length ? `상대적 강점 : ${r.strengths.map(c => c.name + ' ' + fmt(c.score)).join(', ')}\n` : '')
-    + (r.developments.length ? `우선 개발 역량 : ${r.developments.map(c => c.name + ' ' + fmt(c.score)).join(', ')}\n` : '')
+    + (r.strengths.length ? `역량군 내 상대적 강점 : ${r.strengths.map(c => c.name + ' ' + fmt(c.score)).join(', ')}\n` : '')
+    + (r.developments.length ? `역량군 내 우선 개발 역량 : ${r.developments.map(c => c.name + ' ' + fmt(c.score)).join(', ')}\n` : '')
     + (lowList.length ? `\n상대적으로 낮게 응답한 행동\n${lowLines(lowList)}\n` : '')
     + `\n${a.focus.length ? '우선 개발 역량별로' : '낮게 응답한 행동을 중심으로'} 다음을 알려 주세요.\n1. 업무에서 바로 해 볼 실천 방법\n2. 추천 교육·학습 방법\n그리고 마지막에 3개월 실행 순서를 정리해 주세요.\n\n${rules}`;
 }
@@ -2175,10 +2216,10 @@ function diagAsk(target){
 function diagReportInner(r, forFile){
   const fmt = n => n.toFixed(1);
   const a = diagAnalysis(r);
-  const tile = (lab, score) => `<div class="gb-rp-tile"><div class="lab">${lab}</div>
-    <div class="val">${fmt(score)}<small>/ 5</small></div><div class="band">${diagBand(score)}</div></div>`;
+  const tile = g => `<div class="gb-rp-tile"><div class="lab">${g.label}</div>
+    <div class="val">${fmt(g.score)}<small>/ 5</small></div><div class="band">${diagBand(g.score, g.key)}</div></div>`;
   const listBox = (title, list) => `<div class="gb-rp-box"><h3>${title}</h3>
-    <ol>${list.map(c => `<li>${escapeHtml(c.name)}<span class="score">${fmt(c.score)}</span></li>`).join('')}</ol></div>`;
+    <ol>${list.map(c => `<li>${escapeHtml(c.name)}<span class="score">${r.groups.length > 1 ? c.groupLabel + ' · ' : ''}${fmt(c.score)}</span></li>`).join('')}</ol></div>`;
   const askBtn = (target, label) => forFile ? ''
     : `<button class="diag-btn gb-rp-ask" data-diag-ask="${escapeHtml(target)}">${label}</button>`;
   const metaList = (label, list) => (list && list.length)
@@ -2196,18 +2237,17 @@ function diagReportInner(r, forFile){
 
     <h2>진단 요약</h2>
     <div class="gb-rp-tiles">
-      ${r.groups.length > 1 ? tile('전체', r.overall) : ''}
-      ${r.groups.map(g => tile(g.label, g.score)).join('')}
+      ${r.groups.map(tile).join('')}
     </div>
 
     <h2>종합 분석</h2>
     <ul class="gb-rp-notes">${a.notes.map(n => `<li>${escapeHtml(n)}</li>`).join('')}</ul>
     <table class="gb-rp-table gb-rp-dist">
-      <thead><tr><th>응답</th>${[1, 2, 3, 4, 5].map(v => `<th>${v}점</th>`).join('')}</tr></thead>
-      <tbody><tr><td class="c">문항 수</td>${a.dist.map(n => `<td class="c">${n}개 (${a.pct(n)}%)</td>`).join('')}</tr></tbody>
+      <thead><tr><th>응답 분포</th>${[1, 2, 3, 4, 5].map(v => `<th>${v}점</th>`).join('')}</tr></thead>
+      <tbody>${a.dist.map(d => `<tr><td class="c">${d.groups}<br><span class="gb-rp-val">${d.label}</span></td>${d.counts.map(n => `<td class="c">${n}개 (${Math.round(n / d.total * 100)}%)</td>`).join('')}</tr>`).join('')}</tbody>
     </table>
 
-    ${r.strengths.length ? `<h2>강점과 개발 필요 역량</h2>
+    ${r.strengths.length ? `<h2>${r.groups.length > 1 ? '역량군별 강점과 개발 필요 역량' : '강점과 개발 필요 역량'}</h2>
     <div class="gb-rp-two">
       ${listBox('상대적 강점', r.strengths)}
       ${listBox('우선 개발 역량', r.developments)}
@@ -2218,13 +2258,13 @@ function diagReportInner(r, forFile){
     </div>`}
 
     <h2>역량별 점수</h2>
-    <p class="gb-rp-legend"><i class="mark"></i>세로선은 내 전체 평균 ${fmt(r.overall)}점입니다. 역량군 안에서 점수가 높은 순으로 표시했습니다.</p>
+    <p class="gb-rp-legend"><i class="mark"></i>세로선은 해당 역량군의 내 평균입니다. 역량군 안에서 점수가 높은 순으로 표시했습니다.</p>
     ${r.groups.map(g => `
-      <div class="gb-rp-grp"><h3>${g.label}</h3>
+      <div class="gb-rp-grp"><h3>${g.label}<span class="gb-rp-compscore">${fmt(g.score)}점 · ${diagScaleKindOf(g.key).label}</span></h3>
       <div class="gb-rp-bars">
         ${g.comps.slice().sort((x, y) => y.score - x.score).map(c => `<div class="gb-rp-bar">
           <div class="nm">${escapeHtml(c.name)}</div>
-          <div class="tr"><div class="fl" style="width:${c.score / 5 * 100}%"></div><div class="mk" style="left:${r.overall / 5 * 100}%"></div></div>
+          <div class="tr"><div class="fl" style="width:${c.score / 5 * 100}%"></div><div class="mk" style="left:${g.score / 5 * 100}%"></div></div>
           <div class="sc">${fmt(c.score)}</div>
         </div>`).join('')}
       </div></div>`).join('')}
@@ -2232,7 +2272,7 @@ function diagReportInner(r, forFile){
 
     ${a.focus.length ? `<h2>우선 개발 역량 분석</h2>
     ${a.focus.map(f => `<div class="gb-rp-card">
-      <h3>${escapeHtml(f.comp.name)}<span class="gb-rp-compscore">${f.comp.groupLabel} · ${fmt(f.comp.score)}점 · ${diagBand(f.comp.score)}</span></h3>
+      <h3>${escapeHtml(f.comp.name)}<span class="gb-rp-compscore">${f.comp.groupLabel} · ${fmt(f.comp.score)}점 · ${diagBand(f.comp.score, f.comp.group)}</span></h3>
       <p class="gb-rp-kv"><b>상대적으로 낮게 응답한 행동</b></p>
       <ul>${f.low.map(it => `<li>${escapeHtml(it.text)} <span class="gb-rp-val">${it.value}점</span></li>`).join('')}</ul>
       ${metaList('필요 지식', f.comp.knowledge)}
@@ -2265,8 +2305,8 @@ function diagReportInner(r, forFile){
       </table>
     </div>`).join('')).join('')}
 
-    <p class="gb-rp-foot">응답 기준 : ${DIAG_SCALE.map(s => s.v + ' ' + s.t).join(' / ')}<br>
-    역량 점수는 문항 응답의 평균이고, 역량군과 전체 점수는 역량 점수의 평균입니다.${r.aiLevel ? ' AI 활용역량은 ' + escapeHtml(r.aiLevel) + ' 기준입니다.' : ''}</p>`;
+    <p class="gb-rp-foot">${DIAG_SCALE_KINDS.filter(k => r.groups.some(g => k.groups.includes(g.key))).map(k => k.label + ' : ' + k.scale.map(s => s.v + ' ' + s.t).join(' / ')).join('<br>')}<br>
+    역량 점수는 문항 응답의 평균이고, 역량군 점수는 역량 점수의 평균입니다. 공통·역할역량과 AI·직무역량은 척도가 달라 점수를 직접 비교하지 않습니다.${r.aiLevel ? ' AI 활용역량은 ' + escapeHtml(r.aiLevel) + ' 기준입니다.' : ''}</p>`;
 }
 
 function renderDiagReportScreen(){
@@ -2289,8 +2329,8 @@ function renderDiagReportScreen(){
 function diagReportFileHtml(r){
   const title = '역량 자가진단 리포트' + (r.name ? ' - ' + r.name : '');
   const data = JSON.stringify({ version: r.version, name: r.name, org: r.org, job: r.job, level: r.level, scope: r.scope, date: r.date,
-    overall: r.overall, excluded: r.excluded,
-    groups: r.groups.map(g => ({ key: g.key, score: g.score, comps: g.comps.map(c => ({ name: c.name, score: c.score, items: c.items.map(it => it.value) })) })) }).replace(/</g, '\\u003c');
+    excluded: r.excluded,
+    groups: r.groups.map(g => ({ key: g.key, scale: diagScaleKindOf(g.key).label, score: g.score, comps: g.comps.map(c => ({ name: c.name, score: c.score, items: c.items.map(it => it.value) })) })) }).replace(/</g, '\\u003c');
   return '<!doctype html>\n<html lang="ko"><head><meta charset="utf-8">'
     + '<meta name="viewport" content="width=device-width,initial-scale=1">'
     + '<title>' + escapeHtml(title) + '</title><style>'
