@@ -2544,8 +2544,9 @@ function setAIContextBar(){
 function simpleMarkdown(text){
   let h = escapeHtml(text);
   h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/^#{1,4} +(.+)$/gm, '<strong>$1</strong>');
   h = h.replace(/^- (.+)$/gm, '<li>$1</li>');
-  h = h.replace(/(<li>.*<\/li>\n?)+/gs, m => `<ul>${m}</ul>`);
+  h = h.replace(/(<li>[^\n]*<\/li>\n?)+/g, m => `<ul>${m}</ul>`);
   h = h.split(/\n{2,}/).map(p => p.startsWith('<ul>') ? p : `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
   return h;
 }
