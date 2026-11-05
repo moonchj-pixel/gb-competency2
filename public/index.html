@@ -590,8 +590,6 @@
   .diag-option.is-selected{background:var(--ink); border-color:var(--ink);}
   .diag-option.is-selected .diag-option-num,.diag-option.is-selected .diag-option-text{color:#fff;}
   .diag-report-tools{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px;}
-  .diag-name{font-size:13px; font-weight:600; display:flex; align-items:center; gap:7px; margin-right:6px;}
-  .diag-name input{font-family:var(--sans); font-size:13px; padding:7px 10px; border:1px solid var(--rule-strong); border-radius:8px; width:170px;}
   @media (max-width: 880px){
     .diag-actions-row{justify-content:flex-start;}
     .diag-hint{text-align:left;}
@@ -2085,6 +2083,10 @@ const DIAG_REPORT_CSS = `
 .gb-rp-meta{width:100%;border-collapse:collapse;margin-bottom:14px;}
 .gb-rp-meta th,.gb-rp-meta td{border:1px solid var(--rule);padding:7px 10px;text-align:left;font-size:13px;}
 .gb-rp-meta th{background:#F5F6F8;font-weight:600;width:84px;white-space:nowrap;text-align:center;}
+.gb-rp-meta td.gb-rp-name-wrap{padding:3px 5px;}
+.gb-rp-name{width:100%;font:inherit;color:inherit;padding:4px 6px;border:1px solid var(--rule);border-radius:5px;background:#fff;}
+.gb-rp-name:placeholder-shown{border-color:#E0002A;background:#FDEEF1;}
+.gb-rp-name-cell:empty::before{content:'이름을 입력하세요';color:var(--faint);}
 .gb-rp-notice{background:#F5F6F8;border-radius:8px;padding:11px 14px;font-size:12.5px;color:var(--soft);}
 .gb-rp-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;}
 .gb-rp-tile{border:1px solid var(--rule);border-radius:10px;padding:12px 14px;}
@@ -2137,6 +2139,7 @@ const DIAG_REPORT_CSS = `
   .gb-report h2{break-after:avoid;page-break-after:avoid;}
   .gb-rp-box,.gb-rp-tile,.gb-rp-bar{break-inside:avoid;page-break-inside:avoid;}
   .gb-rp-ask,.gb-rp-askbar{display:none;}
+  .gb-rp-name-cell:empty::before{content:'';}
   .gb-rp-grp{break-inside:avoid;page-break-inside:avoid;}
   .gb-report h2,.gb-report h3,.gb-rp-legend{break-after:avoid;page-break-after:avoid;}
   .gb-rp-tiles{grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:7px;}
@@ -2261,7 +2264,9 @@ function diagReportInner(r, forFile){
     <h1>역량 자가진단 리포트</h1>
     <p class="gb-rp-sub">GB 역량사전 행동지표 기준</p>
     <table class="gb-rp-meta">
-      <tr><th>성명</th><td>${escapeHtml(r.name)}</td><th>직무</th><td>${escapeHtml([r.org, r.job].filter(Boolean).join(' · '))}</td></tr>
+      <tr><th>성명</th>${forFile
+        ? (r.name ? `<td>${escapeHtml(r.name)}</td>` : '<td class="gb-rp-name-cell" contenteditable="true"></td>')
+        : `<td class="gb-rp-name-wrap"><input type="text" id="diag-name" class="gb-rp-name" maxlength="30" value="${escapeHtml(r.name)}" placeholder="이름을 입력하세요" aria-label="성명"></td>`}<th>직무</th><td>${escapeHtml([r.org, r.job].filter(Boolean).join(' · '))}</td></tr>
       <tr><th>직급</th><td>${escapeHtml(r.level)}</td><th>진단일</th><td>${escapeHtml(r.date)}</td></tr>
       <tr><th>진단 범위</th><td>${escapeHtml(r.scope)}</td><th>문항 수</th><td>${r.itemCount}문항</td></tr>
     </table>
@@ -2350,12 +2355,11 @@ function renderDiagReportScreen(){
     <style>${DIAG_REPORT_CSS}</style>
     <div class="page-top"><div class="breadcrumb">${escapeHtml(diagTitle())} <span style="opacity:.4;">›</span> 진단 리포트</div>${homeButtonHtml()}</div>
     <div class="diag-report-tools">
-      <label class="diag-name">성명 <input type="text" id="diag-name" maxlength="30" value="${escapeHtml(diag.name)}" placeholder="리포트에 표시할 이름"></label>
       <button class="diag-btn primary" data-diag-action="download">HTML 파일 다운로드</button>
       <button class="diag-btn" data-diag-action="edit">응답 수정하기</button>
       <button class="diag-btn" data-diag-action="clear">응답 지우기</button>
     </div>
-    <p class="diag-note" style="margin:0 0 16px;">내려받은 파일을 열면 인쇄 또는 PDF 저장 버튼이 있습니다. 공용 PC라면 다운로드 후 응답을 지워 주세요.</p>
+    <p class="diag-note" style="margin:0 0 16px;">표의 성명 칸에 이름을 입력한 뒤 내려받으세요. 내려받은 파일을 열면 인쇄 또는 PDF 저장 버튼이 있습니다. 공용 PC라면 다운로드 후 응답을 지워 주세요.</p>
     <div class="gb-report" id="diag-report">${diagReportInner(r)}</div>
   </div>`;
 }
@@ -2454,7 +2458,6 @@ function attachDiagnosisEvents(){
     nameInput.addEventListener('input', () => {
       diag.name = nameInput.value;
       diagSave();
-      document.getElementById('diag-report').innerHTML = diagReportInner(diagBuildResult());
     });
   }
 
