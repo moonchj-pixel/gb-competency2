@@ -129,6 +129,12 @@
     padding:11px 14px; border-radius:8px; cursor:pointer;
   }
   .ai-launch:hover{background:#000;}
+  .diag-launch{
+    width:100%; margin-bottom:8px; font-family:var(--sans); font-weight:600; font-size:14px;
+    padding:10px 14px; border-radius:8px; cursor:pointer;
+    background:#fff; color:var(--brand-ink); border:1px solid var(--brand);
+  }
+  .diag-launch:hover, .diag-launch.selected{background:var(--brand-soft);}
 
   /* ============ MAIN ============ */
   #main{flex:1; display:flex; flex-direction:column; min-width:0; height:100vh;}
@@ -565,6 +571,12 @@
   .diag-job-item input{margin-top:4px; width:16px; height:16px; flex-shrink:0;}
   .diag-job-count{font-size:12px; color:var(--ink-soft); margin-left:7px;}
   .diag-job-def{display:block; font-size:12.5px; color:var(--ink-soft); line-height:1.55; margin-top:2px;}
+  .diag-start-fields{display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:12px; max-width:640px;}
+  .diag-start-field{display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600;}
+  .diag-start-field select{width:100%;}
+  .diag-start .diag-actions-row{justify-content:flex-start;}
+  .diag-start .diag-hint{text-align:left; font-size:13px;}
+  @media (max-width: 880px){ .diag-start-fields{grid-template-columns:1fr;} }
   .diag-scale-title{font-size:14px; font-weight:700; margin:14px 0 8px;}
   .diag-scale-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; font-size:13.5px;}
   .diag-scale-num{display:inline-flex; width:22px; height:22px; align-items:center; justify-content:center; border-radius:6px; background:var(--surface-2); font-weight:700; font-size:12px; margin-right:9px;}
@@ -618,6 +630,7 @@
     </div>
     <nav id="nav"></nav>
     <div class="foot">
+      <button class="diag-launch" id="diag-launch-btn">역량진단하기</button>
       <button class="ai-launch" id="ai-launch-btn">
         <span class="ico">✦</span> 역량 AI에게 물어보기
       </button>
@@ -728,7 +741,7 @@ function routeToUrl(route){
 
 function isValidRoute(r){
   switch(r.type){
-    case 'home': case 'aiOverview': return true;
+    case 'home': case 'aiOverview': case 'diagStart': return true;
     case 'common': return !!findCommon(r.name);
     case 'role': return !!findRole(r.name);
     case 'ai': return !!findAI(r.name);
@@ -963,8 +976,8 @@ function renderTopbar(){
     <button class="topbar-reset" id="f-reset">초기화</button>
   `;
 
-  document.getElementById('f-job').addEventListener('change', e => state.topFilter.job = e.target.value);
-  document.getElementById('f-level').addEventListener('change', e => state.topFilter.level = e.target.value);
+  document.getElementById('f-job').addEventListener('change', e => { state.topFilter.job = e.target.value; diagStartSync(); });
+  document.getElementById('f-level').addEventListener('change', e => { state.topFilter.level = e.target.value; diagStartSync(); });
   document.getElementById('f-kind').addEventListener('change', e => state.topFilter.kind = e.target.value);
   document.getElementById('f-go').addEventListener('click', () => {
     go({type:'myCompetencies', job: state.topFilter.job, level: state.topFilter.level, kind: state.topFilter.kind});
@@ -972,6 +985,7 @@ function renderTopbar(){
   document.getElementById('f-reset').addEventListener('click', () => {
     state.topFilter = {job:'', level:'', kind:''};
     renderTopbar();
+    diagStartSync();
   });
 }
 
@@ -982,6 +996,7 @@ function render(){
   if(document.getElementById('ai-context-bar')) setAIContextBar();
   const c = document.getElementById('content');
   c.classList.toggle('wide', ['home','aiOverview','myCompetencies'].includes(state.route.type));
+  document.getElementById('diag-launch-btn').classList.toggle('selected', ['diagStart','diagnosis'].includes(state.route.type));
   c.dataset.cat = {common:'common', role:'role', ai:'ai', aiOverview:'ai', job:'job', jobOverview:'job'}[state.route.type] || '';
   switch(state.route.type){
     case 'home': c.innerHTML = renderHome(); attachHomeEvents(); break;
@@ -993,6 +1008,7 @@ function render(){
     case 'job': c.innerHTML = renderJobDetail(state.route.job, state.route.name); break;
     case 'myCompetencies': c.innerHTML = renderMyCompetencies(); attachMyCompEvents(); break;
     case 'diagnosis': diagEnsure(state.route); c.innerHTML = renderDiagnosis(); attachDiagnosisEvents(); break;
+    case 'diagStart': c.innerHTML = renderDiagStart(); attachDiagStartEvents(); break;
     default: c.innerHTML = renderHome();
   }
 }
@@ -1871,6 +1887,63 @@ function diagAnsweredCount(comps){
 }
 function diagItemCount(comps){ return comps.reduce((s, c) => s + c.items.length, 0); }
 
+/* ---- 메뉴에서 들어오는 시작 화면 ---- */
+function renderDiagStart(){
+  const { job, level } = state.topFilter;
+  return `
+  <div class="diag-wrap diag-start">
+    <div class="page-top"><div class="breadcrumb"><b>역량 자가진단</b></div>${homeButtonHtml()}</div>
+    <div class="home-hero" style="margin-bottom:22px;">
+      <div class="eyebrow">Self Assessment</div>
+      <h1 style="font-size:26px;">역량 자가진단</h1>
+      <p>내 직무와 직급을 선택한 뒤 진단할 범위를 골라 주세요. 평가가 아니라 본인의 강점과 개발할 부분을 확인하기 위한 진단입니다.</p>
+    </div>
+    <div class="section-block" style="max-width:none;">
+      <h2>내 정보 선택</h2>
+      <div class="diag-start-fields">
+        <label class="diag-start-field">직무
+          <select class="filter-select" id="ds-job">
+            <option value="">직무 선택</option>
+            ${DATA.jobs.map(j => `<option value="${escapeHtml(j.job)}" ${job === j.job ? 'selected' : ''}>${escapeHtml(j.org)} · ${escapeHtml(j.job)}</option>`).join('')}
+          </select>
+        </label>
+        <label class="diag-start-field">직급
+          <select class="filter-select" id="ds-level">
+            <option value="">직급 선택</option>
+            ${LEVELS.map(l => `<option value="${l}" ${level === l ? 'selected' : ''}>${l}</option>`).join('')}
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="section-block" style="max-width:none;">
+      <h2>진단 범위 선택</h2>
+      <div id="ds-actions">${diagActionsHtml(job, level)}</div>
+      <p class="diag-note">※ 응답은 이 브라우저에만 임시 저장되어 나중에 이어서 할 수 있습니다.</p>
+    </div>
+  </div>`;
+}
+
+function attachDiagStartEvents(){
+  attachDiagActions(state.topFilter.job, state.topFilter.level);
+  const pick = (id, key) => document.getElementById(id).addEventListener('change', e => {
+    state.topFilter[key] = e.target.value;
+    renderTopbar();
+    diagStartSync();
+  });
+  pick('ds-job', 'job');
+  pick('ds-level', 'level');
+}
+
+// 선택이 바뀌면 입력칸은 그대로 두고 버튼 상태만 새로 고친다
+function diagStartSync(){
+  if(state.route.type !== 'diagStart') return;
+  const { job, level } = state.topFilter;
+  document.getElementById('ds-job').value = job;
+  document.getElementById('ds-level').value = level;
+  document.getElementById('ds-actions').innerHTML = diagActionsHtml(job, level);
+  attachDiagActions(job, level);
+}
+
 /* ---- 화면 ---- */
 function renderDiagnosis(){
   if(!diag.level) return renderEmpty('직급을 선택해야 진단할 수 있어요');
@@ -2729,6 +2802,7 @@ function lockOuterFrame(){
 
 function initGlobalNav(){
   document.getElementById('brand-home-btn').addEventListener('click', () => go({type:'home'}));
+  document.getElementById('diag-launch-btn').addEventListener('click', () => go({type:'diagStart'}));
   // delegated listener for any "처음으로" / "이전 페이지" buttons rendered into #content
   document.getElementById('content').addEventListener('click', (e) => {
     const backBtn = e.target.closest('[data-go-back]');
