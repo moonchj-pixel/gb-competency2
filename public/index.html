@@ -456,6 +456,7 @@
   .nav-group[data-group="role"] .nav-level-tag{color:var(--role); font-weight:700;}
   .nav-group[data-group="job"] .nav-level-tag{color:var(--job); font-weight:700;}
 
+  .home-hero p.hero-intro{max-width:none;}
   /* 화면 상단 띠: 홈·내 역량은 진한 색, 그 외는 구분 색 */
   .home-hero{background:var(--ink); border-radius:16px; padding:32px 36px;}
   .home-hero .eyebrow{color:#FF8FA3;}
@@ -495,6 +496,17 @@
   .home-card[data-go="aiOverview"]{--soft:var(--ai-soft);}
   .home-card[data-go="jobList"]{--soft:var(--job-soft);}
 
+  /* 홈 소개글이 노트북 폭에서도 두 줄로 들어가도록 */
+  @media (max-width: 1439px){
+    .home-hero{padding:28px 24px;}
+  }
+  @media (max-width: 1365px){
+    #content{padding-left:32px; padding-right:32px;}
+    .home-hero p.hero-intro{font-size:14px;}
+  }
+  @media (max-width: 1270px){
+    .desk-br{display:none;}
+  }
   @media (max-width: 1240px){
     .home-cards{grid-template-columns:repeat(2,1fr);}
     #content{padding-left:32px; padding-right:32px;}
@@ -524,6 +536,7 @@
     #content{overflow:visible; padding:20px 16px 64px;}
     .home-hero h1, .comp-header h1, .job-hero h1{font-size:26px;}
     .home-hero, .comp-header, .job-hero{padding:22px 20px; border-radius:12px;}
+    .home-hero p.hero-intro{font-size:15px;}
     .home-cards{grid-template-columns:1fr;}
     .ksa-card{grid-template-columns:1fr; gap:6px;}
     .ladder-row{flex-direction:column; gap:8px;}
@@ -879,9 +892,7 @@ function renderHome(){
   <div class="home-hero">
     <div class="eyebrow">GB Competency System</div>
     <h1>GB 역량체계</h1>
-    <p>핵심가치, 직급별 역할, 직무에 따라 필요한 역량을 도출하고 <b>전 직무 공통으로 요구되는 AI 활용 역량</b>을 더하여
-    역량 지표를 설정하고, 역량평가·교육·채용 등 인재선발 및 인재 육성에 활용하고 관리하기 위한 체계입니다.
-    아래 표에서 역량을 클릭하면 상세 정의와 행동지표를 바로 확인할 수 있어요.</p>
+    <p class="hero-intro">핵심가치, 직급별 역할, 직무에 따라 필요한 역량을 도출하고 <b>전 직무 공통으로 요구되는 AI 활용 역량</b>을 더하여 역량 지표를 설정하고,<br class="desk-br"> 역량평가·교육·채용 등 인재선발 및 인재 육성에 활용하고 관리하기 위한 체계입니다. 아래 표에서 역량을 클릭하면 상세 정의와 행동지표를 바로 확인할 수 있어요.</p>
   </div>
 
   <div class="table-scroll">
