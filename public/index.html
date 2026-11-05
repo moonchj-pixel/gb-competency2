@@ -2339,6 +2339,17 @@ function attachDiagnosisEvents(){
     });
   }
 
+  // 칸이 화면 경계에 걸려 있을 때 클릭해도 브라우저가 선택 버튼 쪽으로 스크롤하지 않게 한다
+  wrap.querySelectorAll('.diag-option, .diag-job-item').forEach(label => {
+    label.addEventListener('click', e => {
+      const input = label.querySelector('input');
+      if(e.target === input) return; // 키보드 조작은 브라우저 기본 동작을 따른다
+      e.preventDefault();
+      input.focus({ preventScroll: true });
+      input.click();
+    });
+  });
+
   wrap.querySelectorAll('[data-diag-job]').forEach(el => {
     el.addEventListener('change', () => {
       const name = el.dataset.diagJob;
