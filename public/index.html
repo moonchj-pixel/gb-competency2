@@ -2636,6 +2636,20 @@ function initAI(){
   });
 }
 
+// PC 화면은 본문(#content)만 스크롤한다. 어떤 이유로든 바깥 틀이 밀리면 바로 제자리로 돌린다
+function lockOuterFrame(){
+  const reset = () => {
+    if(window.innerWidth <= 880) return; // 모바일은 페이지 전체가 스크롤된다
+    if(window.scrollX || window.scrollY) window.scrollTo(0, 0);
+    ['app', 'main'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el.scrollTop) el.scrollTop = 0;
+      if(el.scrollLeft) el.scrollLeft = 0;
+    });
+  };
+  window.addEventListener('scroll', reset, true);
+}
+
 function initGlobalNav(){
   document.getElementById('brand-home-btn').addEventListener('click', () => go({type:'home'}));
   // delegated listener for any "처음으로" / "이전 페이지" buttons rendered into #content
@@ -2650,6 +2664,7 @@ function initGlobalNav(){
 initRouter();
 initAI();
 initGlobalNav();
+lockOuterFrame();
 document.getElementById('mobile-menu-btn').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
 });
