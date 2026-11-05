@@ -557,6 +557,9 @@
   .diag-table th{background:var(--surface-2); font-weight:600;}
   .diag-table .num{text-align:right; font-variant-numeric:tabular-nums;}
   .diag-table tfoot td{font-weight:700;}
+  .diag-job-summary{font-size:14px; margin:0 0 4px;}
+  .diag-job-level{font-size:14px; font-weight:700; margin:18px 0 8px;}
+  .diag-job-mine{font-size:11.5px; font-weight:700; color:var(--brand-ink); background:var(--brand-soft); border-radius:6px; padding:2px 7px; margin-left:7px;}
   .diag-job-list{display:flex; flex-direction:column; gap:8px;}
   .diag-job-item{display:flex; gap:11px; align-items:flex-start; background:#fff; border:1px solid var(--rule); border-radius:10px; padding:11px 14px; cursor:pointer; font-size:13.5px;}
   .diag-job-item input{margin-top:4px; width:16px; height:16px; flex-shrink:0;}
@@ -1746,8 +1749,13 @@ function diagBank(job, level){
   }
   const j = job ? JOB_BY_NAME[job] : null;
   if(j){
-    out.job = j.competencies.filter(c => (c.level_buckets || []).includes(level))
-      .map(c => diagMakeComp('job', c.name, c.definition, c.behaviors, c));
+    const mine = c => (c.level_buckets || []).includes(level);
+    out.job = j.competencies.filter(mine).concat(j.competencies.filter(c => !mine(c))).map(c => {
+      const comp = diagMakeComp('job', c.name, c.definition, c.behaviors, c);
+      comp.buckets = c.level_buckets || [];
+      comp.isMine = mine(c);
+      return comp;
+    });
   }
   ['common','role','ai','job'].forEach(k => { out[k] = out[k].filter(c => c.items.length); });
   return out;
@@ -1764,13 +1772,14 @@ function diagScopeLabel(scope){
 
 /* ---- 내 역량 보기 화면의 진단 버튼 ---- */
 function diagActionsHtml(job, level){
-  const jobComps = level && job ? diagBank(job, level).job.length : 0;
+  const bankJob = level && job ? diagBank(job, level).job : [];
+  const jobComps = bankJob.length;
   const btn = (scope, label, enabled, cls) =>
     `<button class="diag-btn ${cls||''}" data-diag-scope="${scope}" ${enabled?'':'disabled'}>${label}</button>`;
   let hint = '';
   if(!level) hint = '직급을 선택하면 진단할 수 있어요.';
   else if(!job) hint = '직무까지 선택하면 전체 역량과 직무역량도 진단할 수 있어요.';
-  else if(!jobComps) hint = '이 직무·직급에는 등록된 직무역량이 없어 직무역량을 제외하고 진단합니다.';
+  else if(!bankJob.some(c => c.isMine)) hint = '이 직급 기준 직무역량은 없어요. 진단 화면에서 맡은 업무에 맞는 역량을 직접 선택할 수 있어요.';
   return `<div class="diag-actions">
     <div class="diag-actions-row">
       ${btn('all', '전체 역량 진단하기', !!level && !!job, 'primary')}
@@ -1802,8 +1811,12 @@ function diagLoad(job, level){
 function diagSave(){
   try{
     window.localStorage.setItem(diagStorageKey(diag.job, diag.level),
-      JSON.stringify({ sv: 3, answers: diag.answers, excluded: diag.excluded, name: diag.name }));
+      JSON.stringify({ sv: 3, answers: diag.answers, picked: diag.picked, name: diag.name }));
   }catch(e){ /* 저장이 막힌 환경에서도 진단은 계속한다 */ }
+}
+
+function diagDefaultPicks(job, level){
+  return diagBank(job, level).job.filter(c => c.isMine).map(c => c.name);
 }
 
 function diagEnsure(route){
@@ -1814,7 +1827,9 @@ function diagEnsure(route){
       job: route.job, level: route.level, scope: route.scope,
       step: 'intro', page: 0,
       answers: saved.answers || {},
-      excluded: saved.excluded || [],
+      // 예전 저장본은 내 직급 역량에서 제외했던 것을 뺀 상태로 옮긴다
+      picked: Array.isArray(saved.picked) ? saved.picked
+        : diagDefaultPicks(route.job, route.level).filter(n => !(saved.excluded || []).includes(n)),
       name: saved.name || '',
       missing: false,
       // 응답 척도가 바뀌기 전에 저장한 응답이 있는지 (sv 2는 공통·역할역량까지 새 척도로 저장됨)
@@ -1845,7 +1860,7 @@ function diagActiveComps(){
   const list = [];
   diagScopeGroups(diag.scope).forEach(k => {
     bank[k].forEach(c => {
-      if(k === 'job' && diag.excluded.includes(c.name)) return;
+      if(k === 'job' && !diag.picked.includes(c.name)) return;
       list.push(c);
     });
   });
@@ -1885,21 +1900,36 @@ function renderDiagIntro(){
   const aiNote = groups.includes('ai') && AI
     ? `<p class="diag-note">※ AI 활용역량은 직급별 기본 이수 레벨(${escapeHtml(aiLevelName(rankToCode(diag.level)))}) 기준으로 진단합니다.</p>` : '';
 
+  const jobPicked = comps.filter(c => c.group === 'job');
+  const jobPlaced = new Set();
+  const jobSections = [diag.level].concat(['수석', '책임', '선임', '담당'].filter(l => l !== diag.level)).map(level => ({
+    level,
+    items: bank.job.filter(c => {
+      if(jobPlaced.has(c.name) || !c.buckets.includes(level)) return false;
+      jobPlaced.add(c.name);
+      return true;
+    }),
+  })).filter(s => s.items.length);
   const jobList = showJob ? `
     <div class="section-block" style="max-width:none;">
       <h2>직무역량 선택</h2>
-      <p class="diag-lead">지금 맡은 업무와 전혀 관련이 없는 역량은 체크를 해제해 주세요. 해제한 역량은 진단에서 제외되고, 리포트에 제외 역량으로 표시됩니다.</p>
-      <div class="diag-job-list">
-        ${bank.job.map(c => `
-          <label class="diag-job-item">
-            <input type="checkbox" data-diag-job="${escapeHtml(c.name)}" ${diag.excluded.includes(c.name)?'':'checked'}>
-            <span>
-              <b>${escapeHtml(c.name)}</b>
-              <span class="diag-job-count">${c.items.length}문항</span>
-              <span class="diag-job-def">${escapeHtml(diagCleanText(c.definition))}</span>
-            </span>
-          </label>`).join('')}
-      </div>
+      <p class="diag-lead">${bank.job.some(c => c.isMine)
+        ? '내 직급의 역량이 미리 체크되어 있습니다. 실제 맡은 역할에 맞게 다른 직급의 역량을 추가하거나, 관련 없는 역량은 체크를 해제해 주세요.'
+        : '이 직급 기준의 직무역량은 없습니다. 실제 맡은 역할에 맞는 역량을 직접 선택해 주세요.'}</p>
+      <p class="diag-job-summary">선택 <b>${jobPicked.length}개</b> · <b>${diagItemCount(jobPicked)}문항</b></p>
+      ${jobSections.map(s => `
+        <h3 class="diag-job-level">${s.level}${s.level === diag.level ? '<span class="diag-job-mine">내 직급</span>' : ''}</h3>
+        <div class="diag-job-list">
+          ${s.items.map(c => `
+            <label class="diag-job-item">
+              <input type="checkbox" data-diag-job="${escapeHtml(c.name)}" ${diag.picked.includes(c.name) ? 'checked' : ''}>
+              <span>
+                <b>${escapeHtml(c.name)}</b>
+                <span class="diag-job-count">${c.items.length}문항</span>
+                <span class="diag-job-def">${escapeHtml(diagCleanText(c.definition))}</span>
+              </span>
+            </label>`).join('')}
+        </div>`).join('')}
     </div>` : '';
 
   return `
@@ -2035,8 +2065,10 @@ function diagBuildResult(){
     groups,
     strengths,
     developments,
-    excluded: groups.some(g => g.key === 'job') || diagScopeGroups(diag.scope).includes('job')
-      ? bank.job.filter(c => diag.excluded.includes(c.name)).map(c => c.name) : [],
+    excluded: diagScopeGroups(diag.scope).includes('job')
+      ? bank.job.filter(c => c.isMine && !diag.picked.includes(c.name)).map(c => c.name) : [],
+    added: diagScopeGroups(diag.scope).includes('job')
+      ? bank.job.filter(c => !c.isMine && diag.picked.includes(c.name)).map(c => c.name) : [],
   };
 }
 
@@ -2294,7 +2326,9 @@ function diagReportInner(r, forFile){
       <tbody>${a.otherLow.map(it => `<tr><td class="w">${escapeHtml(it.comp)}</td><td>${escapeHtml(it.text)}</td><td class="c">${it.value}</td></tr>`).join('')}</tbody>
     </table>` : ''}
 
-    ${r.excluded.length ? `<h2>진단에서 제외한 직무역량</h2><p>${r.excluded.map(escapeHtml).join(', ')}</p>` : ''}
+    ${r.added.length || r.excluded.length ? `<h2>직무역량 선택 내역</h2>
+    ${r.added.length ? `<p class="gb-rp-kv"><b>직급 기준 외 추가</b> ${r.added.map(escapeHtml).join(', ')}</p>` : ''}
+    ${r.excluded.length ? `<p class="gb-rp-kv"><b>직급 기준에서 제외</b> ${r.excluded.map(escapeHtml).join(', ')}</p>` : ''}` : ''}
 
     <h2>문항별 응답</h2>
     ${r.groups.map(g => g.comps.map(c => `<div class="gb-rp-comp">
@@ -2329,7 +2363,7 @@ function renderDiagReportScreen(){
 function diagReportFileHtml(r){
   const title = '역량 자가진단 리포트' + (r.name ? ' - ' + r.name : '');
   const data = JSON.stringify({ version: r.version, name: r.name, org: r.org, job: r.job, level: r.level, scope: r.scope, date: r.date,
-    excluded: r.excluded,
+    excluded: r.excluded, added: r.added,
     groups: r.groups.map(g => ({ key: g.key, scale: diagScaleKindOf(g.key).label, score: g.score, comps: g.comps.map(c => ({ name: c.name, score: c.score, items: c.items.map(it => it.value) })) })) }).replace(/</g, '\\u003c');
   return '<!doctype html>\n<html lang="ko"><head><meta charset="utf-8">'
     + '<meta name="viewport" content="width=device-width,initial-scale=1">'
@@ -2393,8 +2427,8 @@ function attachDiagnosisEvents(){
   wrap.querySelectorAll('[data-diag-job]').forEach(el => {
     el.addEventListener('change', () => {
       const name = el.dataset.diagJob;
-      diag.excluded = diag.excluded.filter(x => x !== name);
-      if(!el.checked) diag.excluded.push(name);
+      diag.picked = diag.picked.filter(x => x !== name);
+      if(el.checked) diag.picked.push(name);
       diagSave();
       diagShow(true);
     });
@@ -2452,7 +2486,7 @@ function attachDiagnosisEvents(){
       } else if(action === 'clear'){
         if(!window.confirm('이 브라우저에 저장된 이 직무·직급의 응답을 모두 지울까요? 내려받은 리포트 파일은 지워지지 않습니다.')) return;
         try{ window.localStorage.removeItem(diagStorageKey(diag.job, diag.level)); }catch(e){}
-        diag.answers = {}; diag.excluded = []; diag.name = '';
+        diag.answers = {}; diag.picked = diagDefaultPicks(diag.job, diag.level); diag.name = '';
         diagNav('intro');
       }
     });
